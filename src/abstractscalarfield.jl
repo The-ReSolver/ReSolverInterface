@@ -1,17 +1,20 @@
 # This file contains the abstract type and function definitions required for a
 # scalar field.
 
-# TODO: add parametric typing stuff to functions!
 # TODO: continue filling out the required methods (can I think of any more?)
 # TODO: do I make the vector stuff abstract or keep it purely concrete?
 # TODO: do I need abtract implementations for the projections and other operators?
+# NOTE: the fast convolution will be achieved as follows:
+#           - concrete implementations of scalar fields will store both the spectral and physical representations of the field
+#           - the transforms between the two will be stored in the object as field (or a field of the grid itself stored as a field)
+#           - this allows the object to be passed and the transform to be performed without initialising any unnecessary arrays 
 
 """
     AbstractScalarField
 
 A scalar field defined over a finite domain.
 """
-abstract type AbstractScalarField{Ny, Nz, Nt, T} <: AbstractArray{T, 3} end
+abstract type AbstractScalarField{Ny<:Integer, Nz<:Integer, Nt<:Integer, T<:Number} <: AbstractArray{T, 3} end
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -24,47 +27,38 @@ abstract type AbstractScalarField{Ny, Nz, Nt, T} <: AbstractArray{T, 3} end
 """
     getβ(u::AbstractScalarField) -> Float64
 
-Return the spanwise fundamental wavenumber of the domain.
+Return the spanwise fundamental wavenumber of a given field.
 """
-function getβ(::AbstractScalarField)
-    error("Missing concrete method for getβ")
-end
+getβ(u::AbstractScalarField) = getβ(get_grid(u))
 
 """
     getω(u::AbstractScalarField) -> Float64
 
-Return the fundamental frequency of the field.
+Return the fundamental frequency of a given field.
 """
-function getω(::AbstractScalarField)
-    error("Missing concrete method for getω")
-end
+getω(u::AbstractScalarField) = getω(get_grid(u))
 
 """
     getDy(u::AbstractScalarField) -> AbstractMatrix
 
 Return the first derivative operator of a given field.
 """
-function getDy(::AbstractScalarField)
-    error("Missing concrete method for getDy")
-end
+getDy(u::AbstractScalarField) = getDy(get_grid(u))
 
 """
     getDy2(u::AbstractScalarField) -> AbstractMatrix
 
 Return the second derivative operator of a given field.
 """
-function getDy2(u::AbstractScalarField)
-    return getDy(u)*getDy(u)
-end
+getDy2(u::AbstractScalarField) = getDy(u)*getDy(u)
 
 """
     get_grid(u::AbstractScalarField) -> Type{<:AbstractGrid}
 
-Return the underlying grid on which the given scalar field is defined.
+Return the underlying grid on which the given field is defined.
 """
-function get_grid(::AbstractScalarField)
-    error("Missing concrete method for get_grid")
-end
+get_grid(u::AbstractScalarField) = u.grid
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # pointwise multiplication over the domain
@@ -78,7 +72,7 @@ end
 Multiply two scalar fields in a pointwise (local) manner and return the result
 in `uv`.
 """
-function mult!(::AbstractScalarField, ::AbstractScalarField, ::AbstractScalarField)
+function mult!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt}
     error("Missing concrete method for mult!")
 end
 
@@ -94,9 +88,7 @@ end
 Compute the time derivative of a scalar field `u` and return the result in
 `dudt`.
 """
-function ddt!(::AbstractScalarField, ::AbstractScalarField)
-    error("Missing concrete method for ddt!")
-end
+ddt!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = error("Missing concrete method for ddt!")
 
 """
     ddy!(
@@ -107,9 +99,7 @@ end
 Compute the wall-normal derivative of a scalar field `u` and return the result
 in `dudy`.
 """
-function ddy!(::AbstractScalarField, ::AbstractScalarField)
-    error("Missing concrete method for ddy!")
-end
+ddy!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = error("Missing concrete method for ddy!")
 
 """
     ddz!(
@@ -120,9 +110,7 @@ end
 Compute the spanwise derivative of a scalar field `u` and return the result in
 `dudx`.
 """
-function ddz!(::AbstractScalarField, ::AbstractScalarField)
-    error("Missing concrete method for ddz!")
-end
+ddz!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = error("Missing concrete method for ddz!")
 
 """
     d2dy2!(
@@ -133,9 +121,7 @@ end
 Compute the second wall-normal derivative of a scalar field `u` and return the
 result in `d2udy2`.
 """
-function d2dy2!(d2udy2::AbstractScalarField, u::AbstractScalarField)
-    ddy!(d2udy2, ddy!(d2udy2, u))
-end
+d2dy2!(d2udy2::AbstractScalarField{Ny, Nz, Nt}, u::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = ddy!(d2udy2, ddy!(d2udy2, u))
 
 """
     d2dz2!(
@@ -146,9 +132,7 @@ end
 Compute the second spanwise derivative of a scalar field `u` and return the
 result in `d2udz2`.
 """
-function d2dz2!(d2udz2::AbstractScalarField, u::AbstractScalarField)
-    ddz!(d2udz2, ddz!(d2udz2, u))
-end
+d2dz2!(d2udz2::AbstractScalarField{Ny, Nz, Nt}, u::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = ddz!(d2udz2, ddz!(d2udz2, u))
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,9 +145,7 @@ end
 
 Compute the inner-product of two scalar fields and return the result.
 """
-function LinearAlgebra.dot(::AbstractScalarField, ::AbstractScalarField)
-    error("Missing concrete method for inner-product of scalar fields")
-end
+LinearAlgebra.dot(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = error("Missing concrete method for inner-product of scalar fields")
 
 """
     LinearAlgebra.norm(p::AbstractScalarField) -> Float64
