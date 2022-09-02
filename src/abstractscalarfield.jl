@@ -13,7 +13,7 @@
 
 A scalar field defined over a finite domain.
 """
-abstract type AbstractScalarField{Ny<:Integer, Nz<:Integer, Nt<:Integer, T<:Number} <: AbstractArray{T, 3} end
+abstract type AbstractScalarField{T} <: AbstractArray{T, 3} end
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,7 +71,7 @@ get_grid(u::AbstractScalarField) = u.grid
 Multiply two scalar fields in a pointwise (local) manner and return the result
 in `uv`.
 """
-mult!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
+mult!(::AbstractScalarField, ::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,7 +85,7 @@ mult!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}, ::Ab
 Compute the time derivative of a scalar field `u` and return the result in
 `dudt`.
 """
-ddt!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
+ddt!(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
 
 """
     ddy!(
@@ -96,7 +96,7 @@ ddt!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where
 Compute the wall-normal derivative of a scalar field `u` and return the result
 in `dudy`.
 """
-ddy!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
+ddy!(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
 
 """
     ddz!(
@@ -107,7 +107,7 @@ ddy!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where
 Compute the spanwise derivative of a scalar field `u` and return the result in
 `dudx`.
 """
-ddz!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
+ddz!(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
 
 """
     d2dy2!(
@@ -118,7 +118,7 @@ ddz!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where
 Compute the second wall-normal derivative of a scalar field `u` and return the
 result in `d2udy2`.
 """
-d2dy2!(d2udy2::AbstractScalarField{Ny, Nz, Nt}, u::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = ddy!(d2udy2, ddy!(d2udy2, u))
+d2dy2!(d2udy2::AbstractScalarField, u::AbstractScalarField) = ddy!(d2udy2, ddy!(d2udy2, u))
 
 """
     d2dz2!(
@@ -129,7 +129,7 @@ d2dy2!(d2udy2::AbstractScalarField{Ny, Nz, Nt}, u::AbstractScalarField{Ny, Nz, N
 Compute the second spanwise derivative of a scalar field `u` and return the
 result in `d2udz2`.
 """
-d2dz2!(d2udz2::AbstractScalarField{Ny, Nz, Nt}, u::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = ddz!(d2udz2, ddz!(d2udz2, u))
+d2dz2!(d2udz2::AbstractScalarField, u::AbstractScalarField) = ddz!(d2udz2, ddz!(d2udz2, u))
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,7 +142,7 @@ d2dz2!(d2udz2::AbstractScalarField{Ny, Nz, Nt}, u::AbstractScalarField{Ny, Nz, N
 
 Compute the inner-product of two scalar fields and return the result.
 """
-LinearAlgebra.dot(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
+LinearAlgebra.dot(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
 
 """
     LinearAlgebra.norm(p::AbstractScalarField) -> Float64
