@@ -12,5 +12,6 @@ export norm
 include("notimplementederror.jl")
 include("abstractgrid.jl")
 include("abstractscalarfield.jl")
+include("abstractlaplace.jl")
 
 end
