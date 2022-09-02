@@ -1,7 +1,6 @@
 # This file contains the abstract type and function definitions required for a
 # scalar field.
 
-# TODO: continue filling out the required methods (can I think of any more?)
 # TODO: do I make the vector stuff abstract or keep it purely concrete?
 # TODO: do I need abtract implementations for the projections and other operators?
 # NOTE: the fast convolution will be achieved as follows:
@@ -19,7 +18,7 @@ abstract type AbstractScalarField{Ny<:Integer, Nz<:Integer, Nt<:Integer, T<:Numb
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # constructor methods
-(::Type{<:AbstractScalarField})(::AbstractGrid) = error("Missing concrete constructor for subtype of AbstractScalarField based on subtype of AbstractGrid")
+(::Type{<:AbstractScalarField})(::AbstractGrid) = throw(NotImplementedError())
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,9 +71,7 @@ get_grid(u::AbstractScalarField) = u.grid
 Multiply two scalar fields in a pointwise (local) manner and return the result
 in `uv`.
 """
-function mult!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt}
-    error("Missing concrete method for mult!")
-end
+mult!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -88,7 +85,7 @@ end
 Compute the time derivative of a scalar field `u` and return the result in
 `dudt`.
 """
-ddt!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = error("Missing concrete method for ddt!")
+ddt!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
 
 """
     ddy!(
@@ -99,7 +96,7 @@ ddt!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where
 Compute the wall-normal derivative of a scalar field `u` and return the result
 in `dudy`.
 """
-ddy!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = error("Missing concrete method for ddy!")
+ddy!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
 
 """
     ddz!(
@@ -110,7 +107,7 @@ ddy!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where
 Compute the spanwise derivative of a scalar field `u` and return the result in
 `dudx`.
 """
-ddz!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = error("Missing concrete method for ddz!")
+ddz!(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
 
 """
     d2dy2!(
@@ -145,7 +142,7 @@ d2dz2!(d2udz2::AbstractScalarField{Ny, Nz, Nt}, u::AbstractScalarField{Ny, Nz, N
 
 Compute the inner-product of two scalar fields and return the result.
 """
-LinearAlgebra.dot(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = error("Missing concrete method for inner-product of scalar fields")
+LinearAlgebra.dot(::AbstractScalarField{Ny, Nz, Nt}, ::AbstractScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt} = throw(NotImplementedError())
 
 """
     LinearAlgebra.norm(p::AbstractScalarField) -> Float64
