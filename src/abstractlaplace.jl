@@ -15,13 +15,24 @@ abstract type AbstractLaplace end
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # solution methods
 """
-    solve!(ϕ::AbstractArray, Δ::AbstractLaplace, f::AbstractArray) -> AbstractArray
+    solve!(
+        ϕ::AbstractArray,
+        Δ::AbstractLaplace,
+        f::AbstractArray
+    ) -> AbstractArray
 
-TODO: explanation here!
+Solve the Poisson problem for homogeneous boundary data.
 """
-solve!(phi::AbstractArray, Δ::AbstractLaplace, rhs::AbstractArray) = ldiv!(phi, Δ, rhs)
+solve!(::AbstractArray, ::AbstractLaplace, ::AbstractArray) = throw(NotImplementedError())
 
 """
-    solve!()
+    solve!(
+        ϕ::AbstractArray,
+        Δ::AbstractLaplace,
+        f::AbstractArray,
+        bc::NTuple{N, AbstractArray}
+    ) -> AbstractArray
+
+Solve the Poisson problem for inhomoegenous boundary data.
 """
 solve!(::AbstractArray, ::AbstractLaplace, ::AbstractArray, ::NTuple{N, AbstractArray}) where {N} = throw(NotImplementedError())
