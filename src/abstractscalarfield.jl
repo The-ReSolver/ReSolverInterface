@@ -1,12 +1,14 @@
 # This file contains the abstract type and function definitions required for a
 # scalar field.
 
-# TODO: do I make the vector stuff abstract or keep it purely concrete?
+# ! the vector functionality is built directly on top of scalar fields, so !
+# ! definiting a default concrete version is possible here !
+# TODO: define a concrete implementation of vector fields based directly on the abstract scalar fields
 # TODO: do I need abtract implementations for the projections and other operators?
-# NOTE: the fast convolution will be achieved as follows:
-#           - concrete implementations of scalar fields will store both the spectral and physical representations of the field
-#           - the transforms between the two will be stored in the object as field (or a field of the grid itself stored as a field)
-#           - this allows the object to be passed and the transform to be performed without initialising any unnecessary arrays 
+# * the fast convolution will be achieved as follows:
+# *     - concrete implementations of scalar fields will store both the spectral and physical representations of the field
+# *     - the transforms between the two will be stored in the object as field (or a field of the grid itself stored as a field)
+# *     - this allows the object to be passed and the transform to be performed without initialising any unnecessary arrays 
 
 """
     AbstractScalarField
