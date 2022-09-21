@@ -6,7 +6,7 @@
 
 Subtype of vectors with elements that are subtypes of the AbstractScalarField.
 """
-struct VectorField{N, S<:AbstractScalarField} <: AbstractVector{S}
+struct VectorField{N<:Integer, S<:AbstractScalarField} <: AbstractVector{S}
     elements::Vector{S}
 
     # constructor using scalar fields as arguments
