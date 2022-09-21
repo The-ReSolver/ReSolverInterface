@@ -74,7 +74,7 @@ find_field(::Tuple{}) = nothing
 
 Return the underlying grid on which the given field is defined.
 """
-get_grid(u::AbstractScalarField) = throw(NotImplementedError())
+get_grid(::AbstractScalarField) = throw(NotImplementedError())
 
 # * optional *
 """
@@ -201,7 +201,7 @@ Compute the inner-product of two scalar fields and return the result.
 """
 LinearAlgebra.dot(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
 
-# ? leave ?
+# *optional *
 """
     LinearAlgebra.norm(p::AbstractScalarField) -> Float64
 
