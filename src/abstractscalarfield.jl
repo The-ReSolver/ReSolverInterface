@@ -13,13 +13,16 @@
 
 A scalar field defined over a finite domain.
 """
-abstract type AbstractScalarField{S, T} <: AbstractArray{T, 3} end
+abstract type AbstractScalarField{S, T<:Real} <: AbstractArray{T, 3} end
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # constructor methods
 # ! required !
-(::Type{<:AbstractScalarField})(::AbstractGrid, ::Type{T}) where {T<:Real} = throw(NotImplementedError())
+(::Type{<:AbstractScalarField})(::AbstractGrid, ::Type{T}) where {T} = throw(NotImplementedError())
+
+# ! required !
+(::Type{<:AbstractScalarField})(::AbstractGrid, ::Function, ::Type{T}) where {T} = throw(NotImplementedError())
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -37,14 +40,14 @@ Base.similar(u::AbstractScalarField{S, T}, ::Type{P}=T) where {S, T, P} = typeof
 Base.copy(::AbstractScalarField) = (V = similar(U); V .= U; V)
 
 # * optional *
-Base.@propagate_inbounds function Base.getindex(u::AbstractArray, I...)
+Base.@propagate_inbounds function Base.getindex(u::AbstractScalarField, I...)
     @boundscheck checkbounds(parent(u), I...)
     @inbounds v = parent(u)[I...]
     return v
 end
 
 # * optional *
-Base.Base.@propagate_inbounds function Base.setindex!(u::AbstractArray, v, I...)
+Base.Base.@propagate_inbounds function Base.setindex!(u::AbstractScalarField, v, I...)
     @boundscheck checkbounds(parent(u), I...)
     @inbounds parent(u)[I...] = v
     return v
