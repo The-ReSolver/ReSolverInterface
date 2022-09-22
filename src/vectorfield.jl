@@ -6,7 +6,7 @@
 
 Subtype of vectors with elements that are subtypes of the AbstractScalarField.
 """
-struct VectorField{N<:Integer, S<:AbstractScalarField} <: AbstractVector{S}
+struct VectorField{N, S<:AbstractScalarField} <: AbstractVector{S}
     elements::Vector{S}
 
     # constructor using scalar fields as arguments
@@ -28,10 +28,9 @@ end
 Construct a vector field using a given type of base scalar field type and a
 grid on which it is defined.
 """
-VectorField(fieldtype::Type{<:AbstractScalarField}, grid::AbstractGrid, N::Int=3) = VectorField([fieldtype(grid) for _ in 1:N]...)
+VectorField(::Type{F}, grid::AbstractGrid, N::Int=3) where {F<:AbstractScalarField} = VectorField([F(grid) for _ in 1:N]...)
 
-# TODO: a corresponding function one needs to be implemented for the abstract scalar field
-VectorField(grid::AbstractGrid, funcs::Vararg{<:Function}) = throw(NotImplementedError())
+VectorField(::Type{F}, grid::AbstractGrid, funcs::Vararg{Function}) where {F<:AbstractScalarField} = VectorField([F(grid, funcs[i]) for i in 1:length(funcs)]...)
 
 """
     specialisevectorfieldconstructor(fieldtype::Type{<:AbstractScalarField})
@@ -43,10 +42,14 @@ NOTE: only one of these new constructors can be defined for each environment
 as otherwise it would lead to method ambiguity in the exact constructor to call
 for which field type implied.
 """
-function specialisevectorfieldconstructor(fieldtype::Type{<:AbstractScalarField})
+function specialisevectorfieldconstructor(::Type{F}) where {F<:AbstractScalarField}
     @eval begin
         function VectorField(grid::AbstractGrid, N::Int=3)
-            $VectorField($fieldtype, grid, N)
+            $VectorField($F, grid, N)
+        end
+
+        function VectorField(grid::AbstractGrid, funcs::Vararg{Function})
+            $VectorField($F, grid, funcs...)
         end
     end
 end
@@ -63,8 +66,11 @@ Base.setindex!(q::VectorField, i::Int) = (q.elements[i] = v)
 Base.size(::VectorField{N}) where {N} = (N,)
 Base.length(::VectorField{N}) where {N} = N
 
-# TODO: check if just broadcasting "similar" over the vector field directly is equivalent
-Base.similar(q::VectorField) = VectorField(similar.(q.elements)...)
+# Base.similar(q::VectorField) = VectorField(similar.(q.elements)...)
+# TODO: test this alternate simpler similar method
+# ! UNTESTED METHOD !
+Base.similar(q::VectorField) = similar.(q)
+# ! UNTESTED METHOD !
 Base.copy(q::VectorField) = copy.(q)
 
 

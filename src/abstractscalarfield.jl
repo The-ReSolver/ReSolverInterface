@@ -1,8 +1,6 @@
 # This file contains the abstract type and function definitions required for a
 # scalar field.
 
-# TODO: define matrix interface properly (now needs testing)
-
 # * the fast convolution will be achieved as follows:
 # *     - concrete implementations of scalar fields will store both the spectral and physical representations of the field
 # *     - the transforms between the two will be stored in the object as field (or a field of the grid itself stored as a field)
@@ -13,22 +11,25 @@
 
 A scalar field defined over a finite domain.
 """
-abstract type AbstractScalarField{S, T<:Real} <: AbstractArray{T, 3} end
+abstract type AbstractScalarField{S, T} <: AbstractArray{T, 3} end
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # constructor methods
 # ! required !
-(::Type{<:AbstractScalarField})(::AbstractGrid, ::Type{T}) where {T} = throw(NotImplementedError())
+(::Type{<:AbstractScalarField})(::AbstractGrid) = throw(NotImplementedError())
 
-# ! required !
-(::Type{<:AbstractScalarField})(::AbstractGrid, ::Function, ::Type{T}) where {T} = throw(NotImplementedError())
+# * optional *
+(::Type{<:AbstractScalarField})(::AbstractGrid, ::Function) = throw(NotImplementedError())
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # misc interface methods
 # ! required !
 Base.parent(::AbstractScalarField) = throw(NotImplementedError())
+
+# * optional *
+Base.size(u::AbstractScalarField) = size(parent(u))
 
 # * optional *
 Base.IndexStyle(::Type{<:AbstractScalarField}) = Base.IndexLinear()
