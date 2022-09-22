@@ -6,6 +6,8 @@
 # *     - the transforms between the two will be stored in the object as field (or a field of the grid itself stored as a field)
 # *     - this allows the object to be passed and the transform to be performed without initialising any unnecessary arrays
 
+# TODO: remove type parameter "S" from abstract definition
+
 """
     AbstractScalarField
 
@@ -19,7 +21,7 @@ abstract type AbstractScalarField{S, T} <: AbstractArray{T, 3} end
 # ! required !
 (::Type{<:AbstractScalarField})(::AbstractGrid) = throw(NotImplementedError())
 
-# * optional *
+# ! required !
 (::Type{<:AbstractScalarField})(::AbstractGrid, ::Function) = throw(NotImplementedError())
 
 
