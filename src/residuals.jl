@@ -6,10 +6,4 @@
 
 ℜ(::AbstractVector{<:AbstractScalarField}, otherargs...) = throw(NotImplementedError())
 
-dℜ(::AbstractVectir{<:AbstractScalarField}, otherargs...) = throw(NotImplementedError())
-
-function ℜdℜ(U::AbstractVector{<:AbstractScalarField}, otherargs...)
-    ℜ = ℜ(U, otherargs...)
-    dℜ = dℜ(U, otherargs...)
-    return ℜ, dℜ
-end
+dℜ(::AbstractVector{<:AbstractScalarField}, otherargs...) = throw(NotImplementedError())
