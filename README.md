@@ -2,7 +2,7 @@
 The generic interface that should be defined for a custom implementation of the functionality requried to perform the Resolvent optimisation.
 
 ## Fields
-Below is a list of the required and optional methods that need to be defined for a concrete implementation of the abstract fields type. The absolute bare minimum is included here, as such there are quite a few options related to the abstract array interface that are not listed here. Details about such things can be found in the [interfaces documentation](https://docs.julialang.org/en/v1/manual/interfaces/#man-interface-array).
+Below is a list of the required and optional methods that need to be defined for a concrete implementation of the abstract fields type. The absolute bare minimum is included here, as such there are quite a few options related to the abstract array interface that are not listed here. Details about such things can be found in the [interface documentation](https://docs.julialang.org/en/v1/manual/interfaces/#man-interface-array).
 
 | Methods to implement                                          |                                        | Brief description |
 |:------------------------------------------------------------- |:-------------------------------------- |:---------------------------------------------- |

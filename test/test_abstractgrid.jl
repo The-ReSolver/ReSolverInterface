@@ -5,18 +5,18 @@
 
 struct Grid <: AbstractGrid end
 
-@testset "Grid points" begin
+@testset "Grid points                           " begin
 
 end
 
-@testset "Grid size" begin
+@testset "Grid size                             " begin
 
 end
 
-@testset "Grid comparison" begin
+@testset "Grid comparison                       " begin
 
 end
 
-@testset "Grid info getter methods" begin
+@testset "Grid info getter methods              " begin
 
 end
