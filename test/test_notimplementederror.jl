@@ -4,7 +4,7 @@
 
     # test that abstract method returns error
     @test_throws ReSolverInterface.NotImplementedError f1(2)
-    @test_throws "f1 is missing a concrete implementation" f1(2)
+    @test_throws "f1() is missing a concrete implementation" f1(2)
 
     # concrete method implementation
     f1(a::Int) = nothing
