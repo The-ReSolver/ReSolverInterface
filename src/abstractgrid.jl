@@ -1,5 +1,21 @@
 # This file contains the definitions required to define an abstract grid type.
 
+# The grid in its most abstract context only needs to represent what the points
+# are that discretise the domain. The information required for the differentiation
+# and integration of fields on the grid need to be specified by the user in
+# the concrete implementation.
+
+# Or maybe it's best to go even more abstract. Instead of the grid just containing
+# the differential operators on a cartesian grid, the differential operators stored can
+# be the required vector calculus operations (grad, div, curl, etc.). The exception to
+# this will be the time derivative since it is always Fourier transformed for the
+# the methods used (assumed stationary flow).
+
+# This would mean a user has to decide how each of the vector calculus operations
+# is defined in terms of the individual derivatives. It would also mean the Poisson
+# solver could be made concrete since all it requires would be the laplacian from
+# the grid, the inhomogeneous data, and boundary data.
+
 abstract type AbstractGrid end
 
 """
@@ -11,13 +27,6 @@ grid in each direction.
 points(::AbstractGrid) = throw(NotImplementedError())
 
 """
-    size(g::AbstractGrid) -> NTuple{3, Int}
-
-Return the size of the grid as if it were an array.
-"""
-Base.size(g::AbstractGrid) = length.(points(g))
-
-"""
     ==(g1::AbstractGrid, g2::AbstractGrid) -> Bool
 
 Compare two grids to see if they are the same discrete representation of the
@@ -26,29 +35,36 @@ same domain.
 Base.:(==)(g1::AbstractGrid, g2::AbstractGrid) = (points(g1) == points(g2))
 
 """
-    getβ(u::AbstractGrid) -> Float64
+    Dt(g::AbstractGrid) -> DifferentialOperator
 
-Return the spanwise fundamental wavenumber of the domain.
+Return the time derivative operator defined on the provided grid.
 """
-getβ(::AbstractGrid) = throw(NotImplementedError())
-
-"""
-    getω(u::AbstractGrid) -> Float64
-
-Return the fundamental frequency of the domain.
-"""
-getω(::AbstractGrid) = throw(NotImplementedError())
+Dt(::AbstractGrid) = throw(NotImplementedError())
 
 """
-    getDy(u::AbstractGrid) -> AbstractMatrix
+    grad(g::AbstractGrid) -> DifferentialOperator
 
-Return the first derivative operator of the domain.
+Return the gradient operator defined on the provided grid.
 """
-getDy(::AbstractGrid) = throw(NotImplementedError())
+grad(::AbstractGrid) = throw(NotImplementedError())
 
 """
-    getDy2(u::AbstractScalarField) -> AbstractMatrix
+    div(g::AbstractGrid) -> DifferentialOperator
 
-Return the second derivative operator of the domain.
+Return the divergence operator defined on the provided grid.
 """
-getDy2(::AbstractGrid) = throw(NotImplementedError())
+div(::AbstractGrid) = throw(NotImplementedError())
+
+"""
+    curl(g::AbstractGrid) -> DifferentialOperator
+
+Return the curl operator defined on the provided grid.
+"""
+curl(::AbstractGrid) = throw(NotImplementedError())
+
+"""
+    laplace(g::AbstractGrid) -> DifferentialOperator
+
+Returnt the Laplace operator defined on the provided grid.
+"""
+laplace(g::AbstractGrid) = dot(div(g), grad(g))
