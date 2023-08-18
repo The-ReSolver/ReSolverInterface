@@ -6,14 +6,12 @@
 # *     - the transforms between the two will be stored in the object as field (or a field of the grid itself stored as a field)
 # *     - this allows the object to be passed and the transform to be performed without initialising any unnecessary arrays
 
-# TODO: remove type parameter "S" from abstract definition
-
 """
     AbstractScalarField
 
 A scalar field defined over a finite domain.
 """
-abstract type AbstractScalarField{S, T} <: AbstractArray{T, 3} end
+abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -21,9 +19,17 @@ abstract type AbstractScalarField{S, T} <: AbstractArray{T, 3} end
 # ! required !
 (::Type{<:AbstractScalarField})(::AbstractGrid) = throw(NotImplementedError())
 
-# ! required !
-# TODO: this can be derived
-(::Type{<:AbstractScalarField})(::AbstractGrid, ::Function) = throw(NotImplementedError())
+# * optional *
+# TODO: test this, also check no memory assignment is done in the second point
+function (u::Type{<:AbstractScalarField})(g::AbstractGrid, f)
+    field = u(g)
+    field .= f.(points(g))
+    return field
+end
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# grid methods
+grid(::AbstractScalarField) = throw(NotImplementedError())
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,12 +44,14 @@ Base.size(u::AbstractScalarField) = size(parent(u))
 Base.IndexStyle(::Type{<:AbstractScalarField}) = Base.IndexLinear()
 
 # * optional *
-Base.similar(u::AbstractScalarField{S, T}, ::Type{P}=T) where {S, T, P} = typeof(U)(get_grid(u), P)
+Base.similar(u::AbstractScalarField{S, T}, ::Type{P}=T) where {S, T, P} = typeof(u)(get_grid(u), P)
 
 # * optional *
-Base.copy(::AbstractScalarField) = (V = similar(U); V .= U; V)
+# TODO: does this work if a different constructor is defined
+Base.copy(u::AbstractScalarField) = typeof(u)(copy(parent(u)))
 
 # * optional *
+# TODO: benchmark to see if indexing like this is any faster than just normal indexing
 Base.@propagate_inbounds function Base.getindex(u::AbstractScalarField, I...)
     @boundscheck checkbounds(parent(u), I...)
     @inbounds v = parent(u)[I...]
@@ -56,6 +64,7 @@ Base.Base.@propagate_inbounds function Base.setindex!(u::AbstractScalarField, v,
     @inbounds parent(u)[I...] = v
     return v
 end
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # broadcasting
@@ -71,49 +80,6 @@ find_field(a::AbstractScalarField, rest) = a
 find_field(::Any, rest) = find_field(rest)
 find_field(x) = x
 find_field(::Tuple{}) = nothing
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# domain/grid methods
-# ! required !
-"""
-    get_grid(u::AbstractScalarField) -> Type{<:AbstractGrid}
-
-Return the underlying grid on which the given field is defined.
-"""
-get_grid(::AbstractScalarField) = throw(NotImplementedError())
-
-# * optional *
-"""
-    getβ(u::AbstractScalarField) -> Float64
-
-Return the spanwise fundamental wavenumber of a given field.
-"""
-getβ(u::AbstractScalarField) = getβ(get_grid(u))
-
-# * optional *
-"""
-    getω(u::AbstractScalarField) -> Float64
-
-Return the fundamental frequency of a given field.
-"""
-getω(u::AbstractScalarField) = getω(get_grid(u))
-
-# * optional *
-"""
-    getDy(u::AbstractScalarField) -> AbstractMatrix
-
-Return the first derivative operator of a given field.
-"""
-getDy(u::AbstractScalarField) = getDy(get_grid(u))
-
-# * optional *
-"""
-    getDy2(u::AbstractScalarField) -> AbstractMatrix
-
-Return the second derivative operator of a given field.
-"""
-getDy2(u::AbstractScalarField) = getDy(u)*getDy(u)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,66 +99,38 @@ mult!(::AbstractScalarField, ::AbstractScalarField, ::AbstractScalarField) = thr
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# derivative methods
+# vector calculus methods
 # ! required !
+"""
+    grad!(
+        ∇u::AbstractScalarField,
+        u::AbstractScalarField
+    ) -> AbstractScalarField
+
+Compute the gradient of the scalar field u, overwriting ∇u with the result.
+"""
+grad!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw(NotImplementedError())
+
+"""
+    laplacian!(
+        Δu::AbstractScalarField,
+        u::AbstractScalarField
+    ) -> AbstractScalarField
+
+Compute the Laplacian of the scalar field u, overwriting Δu with the result.
+"""
+laplacian!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw(NotImplementedError())
+
 """
     ddt!(
         dudt::AbstractScalarField,
         u::AbstractScalarField
     ) -> AbstractScalarField
 
-Compute the time derivative of a scalar field `u` and return the result in
-`dudt`.
+Compute the time derivative of the scalar field u, overwriting dudt with the
+result
 """
-ddt!(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
-
-# ! required !
-"""
-    ddy!(
-        dudy::AbstractScalarField,
-        u::AbstractScalarField
-    ) -> AbstractScalarField
-
-Compute the wall-normal derivative of a scalar field `u` and return the result
-in `dudy`.
-"""
-ddy!(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
-
-# ! required !
-"""
-    ddz!(
-        dudz::AbstractScalarField,
-        u::AbstractScalarField
-    ) -> AbstractScalarField
-
-Compute the spanwise derivative of a scalar field `u` and return the result in
-`dudx`.
-"""
-ddz!(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
-
-# * optional *
-"""
-    d2dy2!(
-        d2udy2::AbstractScalarField,
-        u::AbstractScalarField
-    ) -> AbstractScalarField
-
-Compute the second wall-normal derivative of a scalar field `u` and return the
-result in `d2udy2`.
-"""
-d2dy2!(d2udy2::AbstractScalarField, u::AbstractScalarField) = ddy!(d2udy2, ddy!(d2udy2, u))
-
-# * optional *
-"""
-    d2dz2!(
-        d2udz2::AbstractScalarField,
-        u::AbstractScalarField
-    ) -> AbstractScalarField
-
-Compute the second spanwise derivative of a scalar field `u` and return the
-result in `d2udz2`.
-"""
-d2dz2!(d2udz2::AbstractScalarField, u::AbstractScalarField) = ddz!(d2udz2, ddz!(d2udz2, u))
+ddt!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw(NotImplementedError())
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
