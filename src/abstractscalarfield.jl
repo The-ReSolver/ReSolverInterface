@@ -22,6 +22,7 @@ abstract type AbstractScalarField{S, T} <: AbstractArray{T, 3} end
 (::Type{<:AbstractScalarField})(::AbstractGrid) = throw(NotImplementedError())
 
 # ! required !
+# TODO: this can be derived
 (::Type{<:AbstractScalarField})(::AbstractGrid, ::Function) = throw(NotImplementedError())
 
 
