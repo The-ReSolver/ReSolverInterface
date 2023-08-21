@@ -7,16 +7,16 @@ using Test
 
 # ! Put basic concrete implementation here and use test suite to ensure it's valid
 
-struct Grid <: AbstractGrid; A::Matrix{Float64}; end
-points(g::Grid) = g.A
+# struct Grid <: AbstractGrid; A::Matrix{Float64}; end
+# points(g::Grid) = g.A
 
-struct ScalarField{S, T} <: AbstractScalarField{S, T}; data::AbstractArray{T, 3}; end
-# ScalarField{S, T}(::Grid) where {S, T} = ScalarField(zeros(S...), T)
-# ScalarField(::Grid, ::Type{T}=Float64) where {T} = ScalarField(zeros(2, 2, 1), T)
-ScalarField(::Grid) = ScalarField{(2, 2, 2), Float64}(zeros(2, 2, 2))
-ScalarField(::Grid, func::Function) = ScalarField{(2, 2, 2), Float64}(func.(ones(2, 2, 2)))
-Base.parent(u::ScalarField) = u.data
-# specialisevectorfieldconstructor(ScalarField)
+# struct ScalarField{S, T} <: AbstractScalarField{S, T}; data::AbstractArray{T, 3}; end
+# # ScalarField{S, T}(::Grid) where {S, T} = ScalarField(zeros(S...), T)
+# # ScalarField(::Grid, ::Type{T}=Float64) where {T} = ScalarField(zeros(2, 2, 1), T)
+# ScalarField(::Grid) = ScalarField{(2, 2, 2), Float64}(zeros(2, 2, 2))
+# ScalarField(::Grid, func::Function) = ScalarField{(2, 2, 2), Float64}(func.(ones(2, 2, 2)))
+# Base.parent(u::ScalarField) = u.data
+# # specialisevectorfieldconstructor(ScalarField)
 
 # println(ScalarField{1, 1} <: AbstractScalarField)
 # println(supertype(ScalarField))

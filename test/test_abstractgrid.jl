@@ -1,6 +1,3 @@
-# This file contains the tests for a basic concrete implementation of
-# AbstractGrid.
-
 @testset "Grid size                             " begin
 
 end
