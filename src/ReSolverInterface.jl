@@ -1,6 +1,7 @@
 module ReSolverInterface
 
 using LinearAlgebra
+using FFTW
 
 export AbstractGrid, AbstractScalarField, AbstractLaplace, VectorField
 
@@ -15,6 +16,7 @@ include("notimplementederror.jl")
 include("abstractgrid.jl")
 include("abstractscalarfield.jl")
 include("vectorfield.jl")
+include("abstractfft.jl")
 
 
 end
