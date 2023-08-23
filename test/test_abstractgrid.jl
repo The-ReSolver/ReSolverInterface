@@ -1,8 +1,8 @@
 @testset "Abstract grid                         " begin
     # construct my grid
-    grid = MyGrid(collect(-1:0.2:1))
+    grid = MyGrid([(-1 + 0.2*i, 2π/4*j) for i in 0:3, j in 0:3])
 
-    @test points(grid) == [-1, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
-    @test grid == MyGrid([-1, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
-    @test !(grid == MyGrid([-1, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8]))
+    @test points(grid) isa Matrix{Tuple{Float64, Float64}}
+    @test grid == MyGrid(points(grid))
+    @test !(grid == MyGrid(points(grid)[1:end-1, :]))
 end

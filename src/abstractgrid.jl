@@ -5,7 +5,7 @@
 abstract type AbstractGrid{T<:Real, N} end
 
 """
-    points(g::AbstractGrid) -> AbstractArray{<:Real, N}
+    points(g::AbstractGrid) -> AbstractArray{<:Real}
 
 Return an array representing the location of the points making up the grid.
 """

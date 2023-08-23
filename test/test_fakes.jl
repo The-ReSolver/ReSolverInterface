@@ -3,7 +3,7 @@
 
 # grid on a line
 struct MyGrid <: AbstractGrid{Float64, 2}
-    A::Matrix{Float64}
+    A::Matrix{Tuple{Float64, Float64}}
 end
 ReSolverInterface.points(g::MyGrid) = g.A
 
