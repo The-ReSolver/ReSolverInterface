@@ -2,16 +2,23 @@
 # abstract interface defined in the rest of the package.
 
 # grid on a line
-struct MyGrid <: AbstractGrid{Float64, 1}
-    A::Vector{Float64}
+struct MyGrid <: AbstractGrid{Float64, 2}
+    A::Matrix{Float64}
 end
 ReSolverInterface.points(g::MyGrid) = g.A
 
-struct MyScalarField <: AbstractScalarField{3, Float64}
+struct MyScalarField <: AbstractScalarField{2, Float64}
     grid::MyGrid
-    data::Array{Float64, 3}
-end
+    data::Array{Float64, 2}
 
+    MyScalarField(g::MyGrid) = similar(points(g))
+end
+ReSolverInterface.grid(u::MyScalarField) = u.grid
+ReSolverInterface.mult!(uv::MyScalarField, u::MyScalarField, v::MyScalarField) = (@. uv = u*v; return uv)
+ReSolverInterface.grad!(∇u::MyScalarField, u::MyScalarField) = (∇u .= DiffMatrix(points(grid(u)), 3, 1)*u; return ∇u)
+ReSolverInterface.laplacian!(Δu::MyScalarField, u::MyScalarField) = (Δu .= DiffMatrix(points(grid(u)), 3, 2)*u; return Δu)
+ReSolverInterface.ddt!(dudt::MyScalarField, u::MyScalarField) = (dudt .= one.(u); return dudt)
+ReSolverInterface.dot(u::MyScalarField, v::MyScalarField) = sum(u.*v)
 
 
 # # ScalarField{S, T}(::Grid) where {S, T} = ScalarField(zeros(S...), T)

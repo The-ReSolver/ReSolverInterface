@@ -3,13 +3,9 @@ module ReSolverInterface
 using LinearAlgebra
 using FFTW
 
-export AbstractGrid, AbstractScalarField, AbstractLaplace, VectorField
-
-export points
-export getβ, getω, getDy, getDy2
-export ddt!, ddy!, ddz!, d2dy2!, d2dz2!
-export norm
-export specialisevectorfieldconstructor
+export AbstractGrid, points
+export AbstractScalarField, grid, mult!, grad!, laplacian!, ddt!, dot, norm
+export VectorField, specialisevectorfieldconstructor, divergence!, cross!
 
 include("notimplementederror.jl")
 

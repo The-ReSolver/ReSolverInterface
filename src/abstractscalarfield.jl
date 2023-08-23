@@ -17,7 +17,9 @@ abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # constructor methods
 # ! required !
+# TODO: maybe this doesn't need to be a required method???
 (::Type{<:AbstractScalarField})(g::AbstractGrid) = throw(NotImplementedError(g))
+# (::Type{<:AbstractScalarField{<:Any, T}})(g::AbstractGrid) where {T} = similar(T, points(g))
 
 # * optional *
 # TODO: test this, also check no memory assignment is done in the second point
