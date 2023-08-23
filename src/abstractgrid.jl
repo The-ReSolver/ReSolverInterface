@@ -7,7 +7,7 @@ abstract type AbstractGrid{T<:Real, N} end
 
 Return an array representing the location of the points making up the grid.
 """
-points(::AbstractGrid) = throw(NotImplementedError())
+points(g::AbstractGrid) = throw(NotImplementedError(g))
 
 """
     ==(g1::AbstractGrid, g2::AbstractGrid) -> Bool

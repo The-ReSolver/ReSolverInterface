@@ -11,7 +11,7 @@ const NO_TIMELIMIT = FFTW.NO_TIMELIMIT
 
 abstract type AbstractFFTPlan end
 
-(::Type{<:AbstractFFTPlan})(::AbstractGrid; flags::UInt32=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) = throw(NotImplementedError())
+(::Type{<:AbstractFFTPlan})(g::AbstractGrid; flags::UInt32=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) = throw(NotImplementedError(g, flags, timelimit))
 (f::Type{<:AbstractFFTPlan})(u::AbstractScalarField; flags=EXHAUSTIVE, timelimit=NO_TIMELIMIT) = f(grid(u), flags=flags, timelimit=timelimit)
 
 function (f::AbstractFFTPlan)() end
@@ -19,7 +19,7 @@ function (f::AbstractFFTPlan)() end
 
 abstract type AbstractIFFTPlan end
 
-(::Type{<:AbstractIFFTPlan})(::AbstractGrid; flags::UInt32=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) = throw(NotImplementedError())
+(::Type{<:AbstractIFFTPlan})(g::AbstractGrid; flags::UInt32=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) = throw(NotImplementedError(g, flags, timelimit))
 (f::Type{<:AbstractIFFTPlan})(u::AbstractScalarField; flags=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) = f(grid(u), flags=flags, timelimit=timelimit)
 
 function (f::AbstractIFFTPlan)() end

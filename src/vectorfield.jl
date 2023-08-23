@@ -10,8 +10,8 @@ struct VectorField{N, S<:AbstractScalarField} <: AbstractVector{S}
     elements::Vector{S}
 
     # constructor using scalar fields as arguments
-    function VectorField(elements::Vararg{<:AbstractScalarField, N}) where {N}
-        new{N, typeof(elements[1])}(collect(elements))
+    function VectorField(elements::Vararg{AbstractScalarField, N}) where {N}
+        new{N, eltype(elements)}(collect(elements))
     end
 end
 
@@ -33,6 +33,7 @@ VectorField(::Type{F}, grid::AbstractGrid, N::Int=3) where {F<:AbstractScalarFie
 VectorField(::Type{F}, grid::AbstractGrid, funcs::Vararg{Function}) where {F<:AbstractScalarField} = VectorField([F(grid, funcs[i]) for i in 1:length(funcs)]...)
 
 # TODO: this is bad, maybe instead have a method that gets called to determine the number of children AbstractScalarField has
+# TODO: or just leave it up to the user to create an equivalent method
 """
     specialisevectorfieldconstructor(fieldtype::Type{<:AbstractScalarField})
 
@@ -109,7 +110,7 @@ find_field(a::VectorField, rest) = a
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # derivative methods
-divergence!(div_u::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = throw(NotImplementedError())
+divergence!(div_u::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = throw(NotImplementedError(div_u, u))
 
 laplacian!(Δu::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = laplacian!.(Δu, u)
 

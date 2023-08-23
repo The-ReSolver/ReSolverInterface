@@ -17,7 +17,7 @@ abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # constructor methods
 # ! required !
-(::Type{<:AbstractScalarField})(::AbstractGrid) = throw(NotImplementedError())
+(::Type{<:AbstractScalarField})(g::AbstractGrid) = throw(NotImplementedError(g))
 
 # * optional *
 # TODO: test this, also check no memory assignment is done in the second point
@@ -29,13 +29,13 @@ end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # grid methods
-grid(::AbstractScalarField) = throw(NotImplementedError())
+grid(u::AbstractScalarField) = throw(NotImplementedError(u))
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # misc interface methods
 # ! required !
-Base.parent(::AbstractScalarField) = throw(NotImplementedError())
+Base.parent(u::AbstractScalarField) = throw(NotImplementedError(u))
 
 # * optional *
 Base.size(u::AbstractScalarField) = size(parent(u))
@@ -95,7 +95,7 @@ find_field(::Tuple{}) = nothing
 Multiply two scalar fields in a pointwise (local) manner and return the result
 in `uv`.
 """
-mult!(::AbstractScalarField, ::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
+mult!(uv::AbstractScalarField, u::AbstractScalarField, v::AbstractScalarField) = throw(NotImplementedError(uv, u, v))
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,7 +109,7 @@ mult!(::AbstractScalarField, ::AbstractScalarField, ::AbstractScalarField) = thr
 
 Compute the gradient of the scalar field u, overwriting ∇u with the result.
 """
-grad!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw(NotImplementedError())
+grad!(∇u::AbstractScalarField{N}, u::AbstractScalarField{N}) where {N} = throw(NotImplementedError(∇u, u))
 
 """
     laplacian!(
@@ -119,7 +119,7 @@ grad!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw(NotI
 
 Compute the Laplacian of the scalar field u, overwriting Δu with the result.
 """
-laplacian!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw(NotImplementedError())
+laplacian!(Δu::AbstractScalarField{N}, u::AbstractScalarField{N}) where {N} = throw(NotImplementedError(Δu, u))
 
 """
     ddt!(
@@ -130,7 +130,7 @@ laplacian!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw
 Compute the time derivative of the scalar field u, overwriting dudt with the
 result
 """
-ddt!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw(NotImplementedError())
+ddt!(dudt::AbstractScalarField{N}, u::AbstractScalarField{N}) where {N} = throw(NotImplementedError(dudt, u))
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -144,7 +144,7 @@ ddt!(::AbstractScalarField{N}, ::AbstractScalarField{N}) where {N} = throw(NotIm
 
 Compute the inner-product of two scalar fields and return the result.
 """
-LinearAlgebra.dot(::AbstractScalarField, ::AbstractScalarField) = throw(NotImplementedError())
+LinearAlgebra.dot(u::AbstractScalarField, v::AbstractScalarField) = throw(NotImplementedError(u, v))
 
 # *optional *
 """
