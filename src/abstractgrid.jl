@@ -15,4 +15,4 @@ points(::AbstractGrid) = throw(NotImplementedError())
 Compare two grids to see if they are the same discrete representation of the
 same domain.
 """
-Base.:(==)(g1::AbstractGrid, g2::AbstractGrid) = (points(g1) == points(g2))
+Base.:(==)(g1::AbstractGrid, g2::AbstractGrid) = points(g1) == points(g2)
