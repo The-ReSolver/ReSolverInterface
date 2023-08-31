@@ -17,15 +17,17 @@ abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # constructor methods
 # ! required !
-# TODO: maybe this doesn't need to be a required method???
-(::Type{<:AbstractScalarField})(g::AbstractGrid) = throw(NotImplementedError(g))
-# (::Type{<:AbstractScalarField{<:Any, T}})(g::AbstractGrid) where {T} = similar(T, points(g))
+(::Type{<:AbstractScalarField})(g::AbstractGrid, ::Type{T}) where {T} = throw(NotImplementedError(g))
 
 # * optional *
 # TODO: test this, also check no memory assignment is done in the second point
 function (u::Type{<:AbstractScalarField})(g::AbstractGrid, f)
-    field = u(g)
-    field .= f.(points(g))
+    field = u(g); pts = points(g)
+
+    for i in eachindex(pts)
+        field[i] = f(pts[i]...)
+    end
+
     return field
 end
 
@@ -46,11 +48,10 @@ Base.size(u::AbstractScalarField) = size(parent(u))
 Base.IndexStyle(::Type{<:AbstractScalarField}) = Base.IndexLinear()
 
 # * optional *
-Base.similar(u::AbstractScalarField{S, T}, ::Type{P}=T) where {S, T, P} = typeof(u)(get_grid(u), P)
+Base.similar(u::AbstractScalarField{S, T}, ::Type{P}=T) where {S, T, P} = typeof(u)(grid(u), P)
 
 # * optional *
-# TODO: does this work if a different constructor is defined
-Base.copy(u::AbstractScalarField) = typeof(u)(copy(parent(u)))
+Base.copy(u::AbstractScalarField) = (v = similar(u); v .= u; v)
 
 # * optional *
 # TODO: benchmark to see if indexing like this is any faster than just normal indexing
@@ -70,15 +71,14 @@ end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # broadcasting
-# TODO: this block of code needs some serious testing
 # * optional *
-const AbstractScalarFieldStyle = Broadcast.ArrayStyle{AbstractScalarField}
-Base.BroadcastStyle(::Type{<:AbstractScalarField}) = Broadcast.ArrayStyle{<:AbstractScalarField}()
-Base.similar(bc::Base.Broadcast.Broadcasted{AbstractScalarFieldStyle}, ::Type{T}) where {T} = similar(find_field(bc), T)
+const AbstractScalarFieldStyle = Base.Broadcast.ArrayStyle{AbstractScalarField}
+Base.BroadcastStyle(u::Type{<:AbstractScalarField}) = Base.Broadcast.ArrayStyle{u}()
+Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{S}}, ::Type{T}) where {T, S<:AbstractScalarField} = similar(find_field(bc), T)
 
 find_field(bc::Base.Broadcast.Broadcasted) = find_field(bc.args)
 find_field(args::Tuple) = find_field(find_field(args[1]), Base.tail(args))
-find_field(a::AbstractScalarField, rest) = a
+find_field(a::AbstractScalarField, ::Any) = a
 find_field(::Any, rest) = find_field(rest)
 find_field(x) = x
 find_field(::Tuple{}) = nothing
@@ -113,6 +113,7 @@ Compute the gradient of the scalar field u, overwriting ∇u with the result.
 """
 grad!(∇u::AbstractScalarField{N}, u::AbstractScalarField{N}) where {N} = throw(NotImplementedError(∇u, u))
 
+# ! required !
 """
     laplacian!(
         Δu::AbstractScalarField,
@@ -123,6 +124,7 @@ Compute the Laplacian of the scalar field u, overwriting Δu with the result.
 """
 laplacian!(Δu::AbstractScalarField{N}, u::AbstractScalarField{N}) where {N} = throw(NotImplementedError(Δu, u))
 
+# ! required !
 """
     ddt!(
         dudt::AbstractScalarField,
