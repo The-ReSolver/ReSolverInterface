@@ -10,7 +10,7 @@ struct VectorField{N, S<:AbstractScalarField} <: AbstractVector{S}
     elements::Vector{S}
 
     # constructor using scalar fields as arguments
-    function VectorField(elements::Vararg{AbstractScalarField, N}) where {N}
+    function VectorField(elements::Vararg{S, N}) where {S<:AbstractScalarField, N}
         new{N, eltype(elements)}(collect(elements))
     end
 end
@@ -32,30 +32,6 @@ VectorField(::Type{F}, grid::AbstractGrid, N::Int=3) where {F<:AbstractScalarFie
 
 VectorField(::Type{F}, grid::AbstractGrid, funcs::Vararg{Function}) where {F<:AbstractScalarField} = VectorField([F(grid, funcs[i]) for i in 1:length(funcs)]...)
 
-# TODO: this is bad, maybe instead have a method that gets called to determine the number of children AbstractScalarField has
-# TODO: or just leave it up to the user to create an equivalent method
-"""
-    specialisevectorfieldconstructor(fieldtype::Type{<:AbstractScalarField})
-
-Utility function to provide a specialised version of the vector field
-constructor so that the first argument can be ommitted.
-
-NOTE: only one of these new constructors can be defined for each environment
-as otherwise it would lead to method ambiguity in the exact constructor to call
-for which field type implied.
-"""
-function specialisevectorfieldconstructor(::Type{F}) where {F<:AbstractScalarField}
-    @eval begin
-        function VectorField(grid::AbstractGrid, N::Int=3)
-            $VectorField($F, grid, N)
-        end
-
-        function VectorField(grid::AbstractGrid, funcs::Vararg{Function})
-            $VectorField($F, grid, funcs...)
-        end
-    end
-end
-
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # grid methods
@@ -74,22 +50,18 @@ Base.size(::VectorField{N}) where {N} = (N,)
 Base.length(::VectorField{N}) where {N} = N
 
 # Base.similar(q::VectorField) = VectorField(similar.(q.elements)...)
-# TODO: test this alternate simpler similar method
-# ! UNTESTED METHOD !
 Base.similar(q::VectorField) = similar.(q)
-# ! UNTESTED METHOD !
 Base.copy(q::VectorField) = copy.(q)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # broadcasting
 # TODO: separate file for field broadcasting???
-const VectorFieldStyle = Broadcast.ArrayStyle{VectorField}
-Base.BroadcastStyle(::Type{<:VectorField}) = Broadcast.ArrayStyle{VectorField}()
+const VectorFieldStyle = Base.Broadcast.ArrayStyle{VectorField}
+Base.BroadcastStyle(::Type{<:VectorField}) = Base.Broadcast.ArrayStyle{VectorField}()
+Base.similar(bc::Base.Broadcast.Broadcasted{VectorFieldStyle}, ::Type{T}) where {T} = VectorField(similar.([find_field(bc)...])...)
 
-Base.similar(bc::Base.Broadcast.Broadcasted{VectorFieldStyle}, ::Type{T}) where {T} = similar(find_field(bc), T)
-
-find_field(a::VectorField, rest) = a
+find_field(a::VectorField, ::Any) = a
 
 # @inline function Base.copyto!(dest::VectorField{N}, bc::Base.Broadcast.Broadcasted{VectorFieldStyle}) where {N}
 #     for i in 1:N
