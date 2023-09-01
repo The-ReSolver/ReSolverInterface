@@ -12,7 +12,7 @@
     @test copy(u) == u
     @test_nowarn u[1, 2]
     @test_nowarn u[2, 4] = 2.0
-    @test norm(u) == sum(u[i]^2 for i in eachindex(u))
+    @test norm(u) == sqrt(sum(u[i]^2 for i in eachindex(u)))
     @test_nowarn u .= 5.234
     @test_nowarn round.(u)
 end

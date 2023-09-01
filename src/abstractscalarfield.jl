@@ -20,7 +20,6 @@ abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 (::Type{<:AbstractScalarField})(g::AbstractGrid, ::Type{T}) where {T} = throw(NotImplementedError(g))
 
 # * optional *
-# TODO: test this, also check no memory assignment is done in the second point
 function (u::Type{<:AbstractScalarField})(g::AbstractGrid, f)
     field = u(g); pts = points(g)
 
@@ -156,4 +155,4 @@ LinearAlgebra.dot(u::AbstractScalarField, v::AbstractScalarField) = throw(NotImp
 
 Compute the norm of a scalar field and return the result.
 """
-LinearAlgebra.norm(p::AbstractScalarField) = LinearAlgebra.dot(p, p)
+LinearAlgebra.norm(p::AbstractScalarField) = sqrt(LinearAlgebra.dot(p, p))
