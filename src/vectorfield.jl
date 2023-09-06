@@ -49,7 +49,7 @@ Base.setindex!(q::VectorField, v, i::Int) = (q.elements[i] = v)
 Base.size(::VectorField{N}) where {N} = (N,)
 Base.length(::VectorField{N}) where {N} = N
 
-# Base.similar(q::VectorField) = VectorField(similar.(q.elements)...)
+# TODO: base similar method should be defined so there is a complete fallback option
 Base.similar(q::VectorField) = similar.(q)
 Base.copy(q::VectorField) = copy.(q)
 
