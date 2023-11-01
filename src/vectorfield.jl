@@ -53,10 +53,13 @@ Base.length(::VectorField{N}) where {N} = N
 Base.similar(q::VectorField) = similar.(q)
 Base.copy(q::VectorField) = copy.(q)
 
+Base.zero(q::VectorField) = zero.(q)
+Base.vcat(q::VectorField, p::VectorField) = VectorField(q..., p...)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # broadcasting
 # TODO: separate file for field broadcasting???
+# TODO: make broadcasting propogate into the spectral fields
 const VectorFieldStyle = Base.Broadcast.ArrayStyle{VectorField}
 Base.BroadcastStyle(::Type{<:VectorField}) = Base.Broadcast.ArrayStyle{VectorField}()
 Base.similar(bc::Base.Broadcast.Broadcasted{VectorFieldStyle}, ::Type{T}) where {T} = VectorField(similar.([find_field(bc)...])...)

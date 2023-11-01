@@ -61,11 +61,14 @@ Base.@propagate_inbounds function Base.getindex(u::AbstractScalarField, I...)
 end
 
 # * optional *
-Base.Base.@propagate_inbounds function Base.setindex!(u::AbstractScalarField, v, I...)
+Base.@propagate_inbounds function Base.setindex!(u::AbstractScalarField, v, I...)
     @boundscheck checkbounds(parent(u), I...)
     @inbounds parent(u)[I...] = v
     return v
 end
+
+# * optional *
+Base.zero(u::AbstractScalarField) = zero.(u)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
