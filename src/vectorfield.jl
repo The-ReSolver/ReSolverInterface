@@ -87,7 +87,7 @@ find_field(a::VectorField, ::Any) = a
 # derivative methods
 divergence!(div_u::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = throw(NotImplementedError(div_u, u))
 
-laplacian!(Δu::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = laplacian!.(Δu, u)
+laplacian!(Δu::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = throw(NotImplementedError(Δu, u))
 
 ddt!(dudt::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = ddt!.(dudt, u)
 
