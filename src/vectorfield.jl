@@ -59,7 +59,7 @@ Base.vcat(q::VectorField, p::VectorField) = VectorField(q..., p...)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # broadcasting
 # TODO: separate file for field broadcasting???
-# TODO: make broadcasting propogate into the spectral fields
+# TODO: make broadcasting propogate into the spectral fields depending on input
 const VectorFieldStyle = Base.Broadcast.ArrayStyle{VectorField}
 Base.BroadcastStyle(::Type{<:VectorField}) = Base.Broadcast.ArrayStyle{VectorField}()
 Base.similar(bc::Base.Broadcast.Broadcasted{VectorFieldStyle}, ::Type{T}) where {T} = VectorField(similar.([find_field(bc)...])...)
