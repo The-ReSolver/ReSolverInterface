@@ -1,4 +1,4 @@
-@testset "Test RPCF Example                     " begin
+@testset "Grid construction and methods " begin
     # generate random inputs
     Ny = rand(3:20)
     Nz = rand(3:20)

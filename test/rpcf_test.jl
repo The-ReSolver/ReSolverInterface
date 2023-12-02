@@ -75,6 +75,28 @@ end
 
 
 
+
+struct RPCFScalarField{Ny, Nz, Nt, T, M} <: AbstractScalarField{3, Float64}
+    grid::RPCFGrid{Ny, Nz, Nt, M}
+    spec::Array{Complex{T}, 3}
+    phys::Array{T, 3}
+
+    function RPCFScalarField(g::RPCFGrid{Ny, Nz, Nt, M}, data::Array{Complex{T}, 3}=zeros(ComplexF64, Ny, (Nz >> 1) + 1, Nt)) where {Ny, Nz, Nt, M, T}
+        # generate physical field
+        phys = Array{T, 3}(undef, Ny, Nz, Nt)
+
+        new{Ny, Nz, Nt, T, M}(g, data, phys)
+    end
+end
+RPCFScalarField(g::RPCFGrid{Ny, Nz, Nt, M}, ::Type{T}=Float64) where {Ny, Nz, Nt, M, T} = RPCFScalarField(g, zeros(Complex{T}, Ny, (Nz >> 1) + 1, Nt))
+
+ReSolverInterface.grid(u::RPCFScalarField) = u.grid
+Base.parent(u::RPCFScalarField, type::Symbol=:spec) = getfield(u, type)
+Base.similar(u::RPCFScalarField, ::Type{T}=Float64) where {T} = RPCFScalarField(grid(u), T)
+
+
+
+
 # FFTPlan!(g::RPCFGrid, ::Type{T}=Float64; flags::UInt32=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) where {T} = FFTPlan!(parent(RPCFScalarField(g, T), :phys), flags=flags, timelimit=timelimit)
 # FFTPlan!(g::RPCFGrid, ::Type{T}=Float64; flags::UInt32=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) where {T} = (u = RPCFScalarField(g, T); IFFTPlan!(parent(u), size(parent(u, :phys), 2), flags=flags, timelimit=timelimit))
 

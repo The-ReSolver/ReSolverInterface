@@ -13,23 +13,6 @@ A scalar field defined over a finite domain.
 """
 abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# constructor methods
-# ! required !
-(::Type{<:AbstractScalarField})(g::AbstractGrid, ::Type{T}) where {T} = throw(NotImplementedError(g))
-
-# * optional *
-function (u::Type{<:AbstractScalarField})(g::AbstractGrid, f)
-    field = u(g); pts = points(g)
-
-    for i in eachindex(pts)
-        field[i] = f(pts[i]...)
-    end
-
-    return field
-end
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # grid methods
 grid(u::AbstractScalarField) = throw(NotImplementedError(u))
@@ -40,14 +23,14 @@ grid(u::AbstractScalarField) = throw(NotImplementedError(u))
 # ! required !
 Base.parent(u::AbstractScalarField) = throw(NotImplementedError(u))
 
+# ! required !
+Base.similar(u::AbstractScalarField, ::Type{T}) where {T} = throw(NotImplementedError(u))
+
 # * optional *
 Base.size(u::AbstractScalarField) = size(parent(u))
 
 # * optional *
 Base.IndexStyle(::Type{<:AbstractScalarField}) = Base.IndexLinear()
-
-# * optional *
-Base.similar(u::AbstractScalarField{S, T}, ::Type{P}=T) where {S, T, P} = typeof(u)(grid(u), P)
 
 # * optional *
 Base.copy(u::AbstractScalarField) = (v = similar(u); v .= u; v)

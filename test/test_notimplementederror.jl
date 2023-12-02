@@ -1,4 +1,4 @@
-@testset "NotImplementedError                   " begin
+@testset "NotImplementedError           " begin
     # unimplemented method based on abstract type
     f1(a::Number) = throw(ReSolverInterface.NotImplementedError(a))
 
