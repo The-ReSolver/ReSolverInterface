@@ -85,43 +85,6 @@ mult!(uv::AbstractScalarField, u::AbstractScalarField, v::AbstractScalarField) =
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# vector calculus methods
-# ! required !
-"""
-    grad!(
-        ∇u::AbstractScalarField,
-        u::AbstractScalarField
-    ) -> AbstractScalarField
-
-Compute the gradient of the scalar field u, overwriting ∇u with the result.
-"""
-grad!(∇u::AbstractScalarField{N}, u::AbstractScalarField{N}) where {N} = throw(NotImplementedError(∇u, u))
-
-# ! required !
-"""
-    laplacian!(
-        Δu::AbstractScalarField,
-        u::AbstractScalarField
-    ) -> AbstractScalarField
-
-Compute the Laplacian of the scalar field u, overwriting Δu with the result.
-"""
-laplacian!(Δu::AbstractScalarField{N}, u::AbstractScalarField{N}) where {N} = throw(NotImplementedError(Δu, u))
-
-# ! required !
-"""
-    ddt!(
-        dudt::AbstractScalarField,
-        u::AbstractScalarField
-    ) -> AbstractScalarField
-
-Compute the time derivative of the scalar field u, overwriting dudt with the
-result
-"""
-ddt!(dudt::AbstractScalarField{N}, u::AbstractScalarField{N}) where {N} = throw(NotImplementedError(dudt, u))
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # linear algebra methods
 # ! required !
 """

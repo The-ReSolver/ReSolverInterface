@@ -92,16 +92,6 @@ find_field(::Tuple{}) = nothing
 # @inline _unpack(::Any, args::Tuple{}) = ()
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# derivative methods
-# ! requried !
-divergence!(div_u::AbstractVectorField, u::AbstractVectorField) = throw(NotImplementedError(div_u, u))
-
-# ! requried !
-laplacian!(Δu::AbstractVectorField, u::AbstractVectorField) = throw(NotImplementedError(Δu, u))
-
-ddt!(dudt::VectorField, u::VectorField) = ddt!.(dudt, u)
-
 function cross!(v_cross_u::VectorField{3}, v::AbstractVector, u::VectorField{3})
     @. v_cross_u[1] = v[2]*u[3] - v[3]*u[2]
     @. v_cross_u[2] = v[3]*u[1] - v[1]*u[3]

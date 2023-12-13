@@ -12,6 +12,7 @@ include("notimplementederror.jl")
 include("abstractgrid.jl")
 include("abstractscalarfield.jl")
 include("vectorfield.jl")
+include("vectorcalculus.jl")
 include("abstractfft.jl")
 
 
