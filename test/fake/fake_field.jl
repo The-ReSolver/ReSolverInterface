@@ -2,6 +2,7 @@ struct MyField <: AbstractScalarField{2, Float64}
     grid::MyGrid
     data::Matrix{ComplexF64}
 end
+MyField(g::MyGrid; sizes=(2, 2)) = MyField(g, zeros(ComplexF64, sizes...))
 ReSolverInterface.grid(u::MyField) = u.grid
 Base.parent(u::MyField) = u.data
 Base.similar(u::MyField, ::Type{T}=Float64) where {T} = MyField(grid(u), zero(parent(u)))

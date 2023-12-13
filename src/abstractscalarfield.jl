@@ -18,6 +18,9 @@ abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 # ! required !
 (::Type{<:AbstractScalarField})(g::AbstractGrid) = throw(NotImplementedError(g))
 
+# ! required !
+# (::Type{<:AbstractScalarField})(g::AbstractGrid, func) = throw(NotImplementedError(g, func))
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # grid methods
 grid(u::AbstractScalarField) = throw(NotImplementedError(u))
@@ -63,13 +66,6 @@ const AbstractScalarFieldStyle = Base.Broadcast.ArrayStyle{AbstractScalarField}
 Base.BroadcastStyle(u::Type{<:AbstractScalarField}) = Base.Broadcast.ArrayStyle{u}()
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{S}}, ::Type{T}) where {T<:Real, S<:AbstractScalarField} = similar(find_field(bc), T)
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{S}}, ::Type{<:Complex{T}}) where {T, S<:AbstractScalarField} = similar(find_field(bc), T)
-
-find_field(bc::Base.Broadcast.Broadcasted) = find_field(bc.args)
-find_field(args::Tuple) = find_field(find_field(args[1]), Base.tail(args))
-find_field(a::AbstractScalarField, ::Any) = a
-find_field(::Any, rest) = find_field(rest)
-find_field(x) = x
-find_field(::Tuple{}) = nothing
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

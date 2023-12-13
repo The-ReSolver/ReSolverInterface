@@ -1,12 +1,14 @@
 # This file contains the concrete implementation of the vector fields based
 # based on the abstract scalar field defined elsewhere.
 
+abstract type AbstractVectorField{N, S} <: AbstractVector{S} end
+
 """
     VectorField{Int, <:AbstractScalarField}([elements])
 
 Subtype of vectors with elements that are subtypes of the AbstractScalarField.
 """
-struct VectorField{N, S<:AbstractScalarField} <: AbstractVector{S}
+struct VectorField{N, S<:AbstractScalarField} <: AbstractVectorField{N, S}
     elements::Vector{S}
 
     # constructor using scalar fields as arguments
@@ -30,7 +32,8 @@ grid on which it is defined.
 """
 VectorField(::Type{F}, grid::AbstractGrid, N::Int=3) where {F<:AbstractScalarField} = VectorField([F(grid) for _ in 1:N]...)
 
-VectorField(::Type{F}, grid::AbstractGrid, funcs::Vararg{Function}) where {F<:AbstractScalarField} = VectorField([F(grid, funcs[i]) for i in 1:length(funcs)]...)
+# TODO: see if there is a way to get this working without ambiguities
+# VectorField(::Type{F}, grid::AbstractGrid, funcs::Vararg{Function}) where {F<:AbstractScalarField} = VectorField([F(grid, funcs[i]) for i in 1:length(funcs)]...)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,7 +52,6 @@ Base.setindex!(q::VectorField, v, i::Int) = (q.elements[i] = v)
 Base.size(::VectorField{N}) where {N} = (N,)
 Base.length(::VectorField{N}) where {N} = N
 
-# TODO: base similar method should be defined so there is a complete fallback option
 Base.similar(q::VectorField) = similar.(q)
 Base.copy(q::VectorField) = copy.(q)
 
@@ -63,9 +65,15 @@ Base.vcat(q::VectorField, p::VectorField) = VectorField(q..., p...)
 # TODO: make broadcasting propogate into the spectral fields depending on input
 const VectorFieldStyle = Base.Broadcast.ArrayStyle{VectorField}
 Base.BroadcastStyle(::Type{<:VectorField}) = Base.Broadcast.ArrayStyle{VectorField}()
-Base.similar(bc::Base.Broadcast.Broadcasted{VectorFieldStyle}, ::Type{T}) where {T} = VectorField(similar.([find_field(bc)...])...)
+Base.similar(bc::Base.Broadcast.Broadcasted{VectorFieldStyle}, ::Type{T}) where {T} = VectorField(similar.(find_field(bc).elements)...)
 
+find_field(bc::Base.Broadcast.Broadcasted) = find_field(bc.args)
+find_field(args::Tuple) = find_field(find_field(args[1]), Base.tail(args))
 find_field(a::VectorField, ::Any) = a
+find_field(a::AbstractScalarField, ::Any) = a
+find_field(::Any, rest) = find_field(rest)
+find_field(x) = x
+find_field(::Tuple{}) = nothing
 
 # @inline function Base.copyto!(dest::VectorField{N}, bc::Base.Broadcast.Broadcasted{VectorFieldStyle}) where {N}
 #     for i in 1:N
@@ -86,13 +94,15 @@ find_field(a::VectorField, ::Any) = a
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # derivative methods
-divergence!(div_u::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = throw(NotImplementedError(div_u, u))
+# ! requried !
+divergence!(div_u::AbstractVectorField, u::AbstractVectorField) = throw(NotImplementedError(div_u, u))
 
-laplacian!(Δu::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = throw(NotImplementedError(Δu, u))
+# ! requried !
+laplacian!(Δu::AbstractVectorField, u::AbstractVectorField) = throw(NotImplementedError(Δu, u))
 
-ddt!(dudt::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = ddt!.(dudt, u)
+ddt!(dudt::VectorField, u::VectorField) = ddt!.(dudt, u)
 
-function cross!(v_cross_u::VectorField{3, S}, v::AbstractVector, u::VectorField{3, S}) where {S}
+function cross!(v_cross_u::VectorField{3}, v::AbstractVector, u::VectorField{3})
     @. v_cross_u[1] = v[2]*u[3] - v[3]*u[2]
     @. v_cross_u[2] = v[3]*u[1] - v[1]*u[3]
     @. v_cross_u[3] = v[1]*u[2] - v[2]*u[1]
