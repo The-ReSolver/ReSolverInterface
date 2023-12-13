@@ -1,6 +1,8 @@
 # This file contains the abstract type and function definitions required for a
 # scalar field.
 
+# TODO: make this code more generic by removing type information from the higher-order methods
+
 # * the fast convolution will be achieved as follows:
 # *     - concrete implementations of scalar fields will store both the spectral and physical representations of the field
 # *     - the transforms between the two will be stored in the object as field (or a field of the grid itself stored as a field)
@@ -33,7 +35,7 @@ Base.size(u::AbstractScalarField) = size(parent(u))
 Base.IndexStyle(::Type{<:AbstractScalarField}) = Base.IndexLinear()
 
 # * optional *
-Base.copy(u::AbstractScalarField) = (v = similar(u); v .= u; v)
+Base.copy(u::AbstractScalarField) = (v = similar(u); v .= u; return v)
 
 # * optional *
 # TODO: benchmark to see if indexing like this is any faster than just normal indexing
@@ -49,9 +51,6 @@ Base.@propagate_inbounds function Base.setindex!(u::AbstractScalarField, v, I...
     @inbounds parent(u)[I...] = v
     return v
 end
-
-# * optional *
-Base.zero(u::AbstractScalarField) = zero.(u)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

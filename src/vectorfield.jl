@@ -56,6 +56,7 @@ Base.copy(q::VectorField) = copy.(q)
 Base.zero(q::VectorField) = zero.(q)
 Base.vcat(q::VectorField, p::VectorField) = VectorField(q..., p...)
 
+# TODO: test if broadcasting propogates into the underlying scalar fields
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # broadcasting
 # TODO: separate file for field broadcasting???
