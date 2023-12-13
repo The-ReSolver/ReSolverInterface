@@ -15,6 +15,9 @@ A scalar field defined over a finite domain.
 """
 abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 
+# ! required !
+(::Type{<:AbstractScalarField})(g::AbstractGrid) = throw(NotImplementedError(g))
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # grid methods
 grid(u::AbstractScalarField) = throw(NotImplementedError(u))
