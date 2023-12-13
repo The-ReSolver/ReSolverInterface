@@ -5,9 +5,9 @@ using FFTW
 
 using FDGrids
 
-include("rpcf_test.jl")
+include("fake/fake_grid.jl")
 
 include("test_notimplementederror.jl")
 include("test_abstractgrid.jl")
-include("test_abstractscalarfield.jl")
+# include("test_abstractscalarfield.jl")
 # include("test_vectorfield.jl")

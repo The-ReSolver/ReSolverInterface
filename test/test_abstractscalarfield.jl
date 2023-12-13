@@ -51,5 +51,19 @@ end
 end
 
 @testset "Scalar field inner product    " begin
+    # initialise grid variables
+    Ny = 64; Nz = 64; Nt = 64
+    y = chebpts(Ny)
+    Dy = chebdiff(Ny)
+    Dy2 = chebddiff(Ny)
+    ws = chebws(Ny)
+    ω = abs(rand())
+    β = abs(rand())
 
+    # initialise grid
+    grid = Grid(y, Nz, Nt, Dy, Dy2, ws, ω, typeof(ω)(β))
+
+    # initialise function
+    func1(y, z, t) = (1 - y^2)*exp(cos(β*z))*cos(sin(ω*t))
+    func2(y, z, t) = cos(π*y)*(1 - y^2)*exp(sin(β*z))*(cos(ω*t)^2)
 end
