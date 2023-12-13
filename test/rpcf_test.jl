@@ -94,8 +94,31 @@ ReSolverInterface.grid(u::RPCFScalarField) = u.grid
 Base.parent(u::RPCFScalarField, type::Symbol=:spec) = getfield(u, type)
 Base.similar(u::RPCFScalarField, ::Type{T}=Float64) where {T} = RPCFScalarField(grid(u), T)
 
+function LinearAlgebra.dot(u::RPCFScalarField{Ny, Nz, Nt}, v::RPCFScalarField{Ny, Nz, Nt}) where {Ny, Nz, Nt}
+    # initliase sum total
+    sum = 0.0
 
+    # sum over top half plane exclusive of the mean spanwise mode
+    for nt in 1:Nt, nz in 2:((Nz >> 1) + 1), ny in 1:Ny
+        sum += grid(u).ws[ny]*real(u[ny, nz, nt]*conj(v[ny, nz, nt]))
+    end
 
+    # sum over the positive temporal modes for the mean spanwise mode
+    for nt in 2:((Nt >> 1) + 1), ny in 1:Ny
+        sum += grid(u).ws[ny]*real(u[ny, 1, nt]*conj(ny, 1, nt))
+    end
+
+    # add the mean contribution
+    for ny in 1:Ny
+        sum += 0.5*grid(u).ws[ny]*real(u[ny, 1, 1]*v[ny, 1, 1])
+    end
+
+    # extract domain size for scaling
+    β = grid(u).β
+    ω = grid(u).ω
+
+    return ((8π^2)/(β*ω))*sum
+end
 
 # FFTPlan!(g::RPCFGrid, ::Type{T}=Float64; flags::UInt32=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) where {T} = FFTPlan!(parent(RPCFScalarField(g, T), :phys), flags=flags, timelimit=timelimit)
 # FFTPlan!(g::RPCFGrid, ::Type{T}=Float64; flags::UInt32=EXHAUSTIVE, timelimit::Real=NO_TIMELIMIT) where {T} = (u = RPCFScalarField(g, T); IFFTPlan!(parent(u), size(parent(u, :phys), 2), flags=flags, timelimit=timelimit))
