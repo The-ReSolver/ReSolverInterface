@@ -57,7 +57,6 @@ end
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # broadcasting
 # * optional *
-const AbstractScalarFieldStyle = Base.Broadcast.ArrayStyle{AbstractScalarField}
 Base.BroadcastStyle(u::Type{<:AbstractScalarField}) = Base.Broadcast.ArrayStyle{u}()
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{S}}, ::Type{T}) where {T<:Real, S<:AbstractScalarField} = similar(find_field(bc), T)
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{S}}, ::Type{<:Complex{T}}) where {T, S<:AbstractScalarField} = similar(find_field(bc), T)
