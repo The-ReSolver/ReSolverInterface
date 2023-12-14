@@ -5,7 +5,7 @@ end
 MyField(g::MyGrid; sizes=(2, 2)) = MyField(g, zeros(ComplexF64, sizes...))
 ReSolverInterface.grid(u::MyField) = u.grid
 Base.parent(u::MyField) = u.data
-Base.similar(u::MyField, ::Type{T}=Float64) where {T} = MyField(grid(u), zero(parent(u)))
+Base.similar(u::MyField, ::Type{T}=ComplexF64) where {T} = MyField(grid(u), zeros(T, size(parent(u))))
 ReSolverInterface.mult!(uv::MyField, u::MyField, v::MyField) = (uv .= u.*v; return uv)
 ReSolverInterface.grad!(∇u::MyField, u::MyField) = (∇u .= 2 .* u; return ∇u)
 ReSolverInterface.laplacian!(Δu::MyField, u::MyField) = (Δu .= u.^2; return Δu)

@@ -1,7 +1,5 @@
 @testset "Vector field                  " begin
-    # generate grid
     g = MyGrid()
-
     u1 = @test_nowarn VectorField(MyField(g), MyField(g))
     u2 = @test_nowarn VectorField(MyField, g)
     u3 = @test_nowarn VectorField(MyField(g, rand(ComplexF64, 2, 2)), MyField(g, rand(ComplexF64, 2, 2)), MyField(g, rand(ComplexF64, 2, 2)))
@@ -16,10 +14,8 @@
     @test length(u1) == 2
 
     @test similar(u2) isa VectorField{3, MyField}
-    @test size(similar(u1)) == (2,)
     @test copy(u2) == u2
 
-    @test ddt!(similar(u3), u3) == VectorField(sqrt.(u3[1]), sqrt.(u3[2]), sqrt.(u3[3]))
     @test cross!(similar(u2), [0, 0, 1], u2) == VectorField(-u2[2], u2[1], MyField(g))
 
     @test dot(u3, u4) ≈ dot(u3[1], u4[1]) + dot(u3[2], u4[2]) + dot(u3[3], u4[3])

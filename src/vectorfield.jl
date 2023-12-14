@@ -54,22 +54,8 @@ Base.setindex!(q::AbstractVectorField, v, i::Int) = (parent(q)[i] = v; return v)
 Base.size(::AbstractVectorField{N}) where {N} = (N,)
 Base.length(::AbstractVectorField{N}) where {N} = N
 
-Base.similar(q::AbstractVectorField) = similar.(q)
-Base.copy(q::AbstractVectorField) = copy.(q)
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# broadcasting
-Base.BroadcastStyle(q::Type{<:AbstractVectorField}) = Base.Broadcast.ArrayStyle{q}()
-Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}, ::Type{T}) where {T, V<:AbstractVectorField} = VectorField(similar.(find_field(bc).elements)...)
-
-find_field(bc::Base.Broadcast.Broadcasted) = find_field(bc.args)
-find_field(args::Tuple) = find_field(find_field(args[1]), Base.tail(args))
-find_field(a::AbstractVectorField, ::Any) = a
-find_field(a::AbstractScalarField, ::Any) = a
-find_field(::Any, rest) = find_field(rest)
-find_field(x) = x
-find_field(::Tuple{}) = nothing
+Base.similar(q::AbstractVectorField, ::Type{T}=eltype(q[1])) where {T} = VectorField(similar.(parent(q), T)...)
+Base.copy(q::AbstractVectorField) = VectorField(copy.(parent(q))...)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
