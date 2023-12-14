@@ -3,11 +3,6 @@
 
 # TODO: make this code more generic by removing type information from the higher-order methods
 
-# * the fast convolution will be achieved as follows:
-# *     - concrete implementations of scalar fields will store both the spectral and physical representations of the field
-# *     - the transforms between the two will be stored in the object as field (or a field of the grid itself stored as a field)
-# *     - this allows the object to be passed and the transform to be performed without initialising any unnecessary arrays
-
 """
     AbstractScalarField
 

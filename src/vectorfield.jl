@@ -38,38 +38,34 @@ VectorField(::Type{F}, grid::AbstractGrid, N::Int=3) where {F<:AbstractScalarFie
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # grid methods
+grid(q::AbstractVectorField) = throw(NotImplementedError(q))
 grid(q::VectorField) = grid(q[1])
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # misc interface methods
+Base.parent(q::AbstractVectorField) = throw(NotImplementedError(q))
 Base.parent(q::VectorField) = q.elements
-Base.IndexStyle(::Type{<:VectorField}) = Base.IndexLinear()
+Base.IndexStyle(::Type{<:AbstractVectorField}) = Base.IndexLinear()
 
-Base.getindex(q::VectorField, i::Int) = q.elements[i]
-Base.setindex!(q::VectorField, v, i::Int) = (q.elements[i] = v)
+Base.getindex(q::AbstractVectorField, i::Int) = parent(q)[i]
+Base.setindex!(q::AbstractVectorField, v, i::Int) = (parent(q)[i] = v; return v)
 
-Base.size(::VectorField{N}) where {N} = (N,)
-Base.length(::VectorField{N}) where {N} = N
+Base.size(::AbstractVectorField{N}) where {N} = (N,)
+Base.length(::AbstractVectorField{N}) where {N} = N
 
-Base.similar(q::VectorField) = similar.(q)
-Base.copy(q::VectorField) = copy.(q)
+Base.similar(q::AbstractVectorField) = similar.(q)
+Base.copy(q::AbstractVectorField) = copy.(q)
 
-Base.zero(q::VectorField) = zero.(q)
-Base.vcat(q::VectorField, p::VectorField) = VectorField(q..., p...)
 
-# TODO: test if broadcasting propogates into the underlying scalar fields
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # broadcasting
-# TODO: separate file for field broadcasting???
-# TODO: make broadcasting propogate into the spectral fields depending on input
-const VectorFieldStyle = Base.Broadcast.ArrayStyle{VectorField}
-Base.BroadcastStyle(::Type{<:VectorField}) = Base.Broadcast.ArrayStyle{VectorField}()
-Base.similar(bc::Base.Broadcast.Broadcasted{VectorFieldStyle}, ::Type{T}) where {T} = VectorField(similar.(find_field(bc).elements)...)
+Base.BroadcastStyle(q::Type{<:AbstractVectorField}) = Base.Broadcast.ArrayStyle{q}()
+Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}, ::Type{T}) where {T, V<:AbstractVectorField} = VectorField(similar.(find_field(bc).elements)...)
 
 find_field(bc::Base.Broadcast.Broadcasted) = find_field(bc.args)
 find_field(args::Tuple) = find_field(find_field(args[1]), Base.tail(args))
-find_field(a::VectorField, ::Any) = a
+find_field(a::AbstractVectorField, ::Any) = a
 find_field(a::AbstractScalarField, ::Any) = a
 find_field(::Any, rest) = find_field(rest)
 find_field(x) = x
@@ -92,7 +88,7 @@ find_field(::Tuple{}) = nothing
 # @inline _unpack(::Any, args::Tuple{}) = ()
 
 
-function cross!(v_cross_u::VectorField{3}, v::AbstractVector, u::VectorField{3})
+function cross!(v_cross_u::AbstractVectorField{3}, v::AbstractVector, u::AbstractVectorField{3})
     @. v_cross_u[1] = v[2]*u[3] - v[3]*u[2]
     @. v_cross_u[2] = v[3]*u[1] - v[1]*u[3]
     @. v_cross_u[3] = v[1]*u[2] - v[2]*u[1]
@@ -103,6 +99,6 @@ end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # linear algebra methods
-LinearAlgebra.dot(q::VectorField{N}, p::VectorField{N}) where {N} = sum(LinearAlgebra.dot(q[i], p[i]) for i in 1:N)
+LinearAlgebra.dot(q::AbstractVectorField{N}, p::AbstractVectorField{N}) where {N} = sum(LinearAlgebra.dot(q[i], p[i]) for i in 1:N)
 
-LinearAlgebra.norm(q::VectorField) = sqrt(LinearAlgebra.dot(q, q))
+LinearAlgebra.norm(q::AbstractVectorField) = sqrt(LinearAlgebra.dot(q, q))
