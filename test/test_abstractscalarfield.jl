@@ -1,6 +1,5 @@
 @testset "Scalar field                  " begin
-    # u = MyField(MyGrid(), rand(ComplexF64, 2, 2))
-    u = MyField(MyGrid(), ones(ComplexF64, 2, 2))
+    u = MyField(MyGrid(), rand(ComplexF64, 2, 2))
     v = MyField(MyGrid(), parent(u) .+ Complex(1.0, 2.0))
     @test size(u) == (2, 2)
     @test IndexStyle(MyField) == Base.IndexLinear()
