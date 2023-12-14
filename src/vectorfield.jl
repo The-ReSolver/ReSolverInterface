@@ -1,14 +1,14 @@
 # This file contains the concrete implementation of the vector fields based
 # based on the abstract scalar field defined elsewhere.
 
-abstract type AbstractVectorField{N, S} <: AbstractVector{S} end
+abstract type AbstractVectorField{N, S<:AbstractScalarField} <: AbstractVector{S} end
 
 """
     VectorField{Int, <:AbstractScalarField}([elements])
 
 Subtype of vectors with elements that are subtypes of the AbstractScalarField.
 """
-struct VectorField{N, S<:AbstractScalarField} <: AbstractVectorField{N, S}
+struct VectorField{N, S} <: AbstractVectorField{N, S}
     elements::Vector{S}
 
     # constructor using scalar fields as arguments
@@ -71,23 +71,9 @@ find_field(::Any, rest) = find_field(rest)
 find_field(x) = x
 find_field(::Tuple{}) = nothing
 
-# @inline function Base.copyto!(dest::VectorField{N}, bc::Base.Broadcast.Broadcasted{VectorFieldStyle}) where {N}
-#     for i in 1:N
-#         copyto!(dest.elements[i], unpack(bc, i))
-#     end
 
-#     return dest
-# end
-
-# @inline unpack(bc::Base.Broadcast.Broadcasted, i) = Base.Broadcast.Broadcasted(bc.f, _unpack(i, bc.args))
-# @inline unpack(x::Any, i) = x
-# @inline unpack(q::VectorField, i) = q.elements[i]
-
-# @inline _unpack(i, args::Tuple) = (unpack(args[1], i), _unpack(i, Base.tail(args))...)
-# @inline _unpack(i, args::Tuple{Any}) = (unpack(args[1], i),)
-# @inline _unpack(::Any, args::Tuple{}) = ()
-
-
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# vector cross-product
 function cross!(v_cross_u::AbstractVectorField{3}, v::AbstractVector, u::AbstractVectorField{3})
     @. v_cross_u[1] = v[2]*u[3] - v[3]*u[2]
     @. v_cross_u[2] = v[3]*u[1] - v[1]*u[3]
