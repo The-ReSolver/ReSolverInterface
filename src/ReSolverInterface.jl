@@ -14,6 +14,7 @@ include("abstractscalarfield.jl")
 include("vectorfield.jl")
 include("vectorcalculus.jl")
 include("abstractfft.jl")
+include("optcache.jl")
 
 
 end
