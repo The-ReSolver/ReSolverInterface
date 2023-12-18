@@ -15,11 +15,10 @@ Base.BroadcastStyle(u::Type{<:AbstractScalarField}) = Base.Broadcast.ArrayStyle{
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{S}}, ::Type{T}) where {T, S<:AbstractScalarField} = similar(find_field(bc), T)
 
 
-# TODO: is there a way to make this operate on the abstract interface???
-Base.BroadcastStyle(::Type{<:VectorField{N}}) where {N} = Base.Broadcast.ArrayStyle{VectorField{N}}()
-Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{VectorField{N}}}, ::Type{T}) where {T, N} = similar(find_field(bc), T)
+Base.BroadcastStyle(q::Type{<:AbstractVectorField{N}}) where {N} = Base.Broadcast.ArrayStyle{q}()
+Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}, ::Type{T}) where {T, N, V<:AbstractVectorField{N}} = similar(find_field(bc), T)
 
-function Base.copy(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{VectorField{N}}}) where {N}
+function Base.copy(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}) where {N, V<:AbstractVectorField{N}}
     dest = similar(bc, eltype(find_field(bc)[1]))
 
     for i in 1:N
@@ -29,7 +28,7 @@ function Base.copy(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{Vect
     return dest
 end
 
-function Base.copyto!(dest::VectorField{N}, bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{VectorField{N}}}) where {N}
+function Base.copyto!(dest::VectorField{N}, bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}) where {N, V<:AbstractVectorField{N}}
     for i in 1:N
         broadcast!(bc.f, dest[i], unpack(bc, i)...)
     end
