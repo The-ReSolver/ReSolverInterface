@@ -40,7 +40,6 @@ end
 # TODO: is there a way to make this not use an abstract collection???
 unpack(bc::Base.Broadcast.Broadcasted, i::Int) = unpack(bc.args, i, [])
 unpack(args::Tuple, i::Int, out::Vector) = (x = unpack(args[1], i); push!(out, x); unpack(x, Base.tail(args), i, out))
-unpack(a::AbstractVectorField, i::Int) = a[i]
 unpack(a::AbstractVector, i::Int) = a[i]
 unpack(x, ::Int) = x
 unpack(::Any, rest, i::Int, out::Vector) = unpack(rest, i, out)
