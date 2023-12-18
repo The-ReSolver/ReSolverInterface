@@ -14,15 +14,26 @@
 Base.BroadcastStyle(u::Type{<:AbstractScalarField}) = Base.Broadcast.ArrayStyle{u}()
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{S}}, ::Type{T}) where {T, S<:AbstractScalarField} = similar(find_field(bc), T)
 
-
 Base.BroadcastStyle(q::Type{<:AbstractVectorField{N}}) where {N} = Base.Broadcast.ArrayStyle{q}()
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}, ::Type{T}) where {T, N, V<:AbstractVectorField{N}} = similar(find_field(bc), T)
 
+Base.BroadcastStyle(::Base.Broadcast.ArrayStyle{V}, ::Base.Broadcast.ArrayStyle{S}) where {V<:AbstractVectorField, S<:AbstractScalarField} = Base.Broadcast.ArrayStyle{V}()
+
+find_field(bc::Base.Broadcast.Broadcasted) = find_field(bc.args)
+find_field(args::Tuple) = find_field(find_field(args[1]), Base.tail(args))
+find_field(a::AbstractVectorField, ::Any) = a
+find_field(a::AbstractScalarField, ::Any) = a
+find_field(::Any, rest) = find_field(rest)
+find_field(x) = x
+find_field(::Tuple{}) = nothing
+
+# TODO: can't do negation???
+# TODO: does flatten actually work, do I need to unpack recursively???
 function Base.copy(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}) where {N, V<:AbstractVectorField{N}}
     dest = similar(bc, eltype(find_field(bc)[1]))
 
     for i in 1:N
-        broadcast!(bc.f, dest[i], unpack(bc, i)...)
+        broadcast!(bc.f, dest[i], unpack(Base.Broadcast.flatten(bc), i)...)
     end
 
     return dest
@@ -30,7 +41,7 @@ end
 
 function Base.copyto!(dest::VectorField{N}, bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}) where {N, V<:AbstractVectorField{N}}
     for i in 1:N
-        broadcast!(bc.f, dest[i], unpack(bc, i)...)
+        broadcast!(bc.f, dest[i], unpack(Base.Broadcast.flatten(bc), i)...)
     end
 
     return dest
@@ -43,13 +54,3 @@ unpack(a::AbstractVector, i::Int) = a[i]
 unpack(x, ::Int) = x
 unpack(::Any, rest, i::Int, out::Vector) = unpack(rest, i, out)
 unpack(::Tuple{}, ::Int, out::Vector) = out
-
-
-
-find_field(bc::Base.Broadcast.Broadcasted) = find_field(bc.args)
-find_field(args::Tuple) = find_field(find_field(args[1]), Base.tail(args))
-find_field(a::AbstractVectorField, ::Any) = a
-find_field(a::AbstractScalarField, ::Any) = a
-find_field(::Any, rest) = find_field(rest)
-find_field(x) = x
-find_field(::Tuple{}) = nothing
