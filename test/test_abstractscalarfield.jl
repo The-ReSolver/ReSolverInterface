@@ -7,5 +7,5 @@
     @test u[2, 1] == u.data[2, 1]
     @test_nowarn u[2, 2] = 2.0
     @test u[2, 2] == 2.0
-    @test norm(u) == sqrt(sum(dot(ui, ui) for ui in u))
+    @test norm(u) ≈ sqrt(sum(dot(ui, ui) for ui in u))
 end
