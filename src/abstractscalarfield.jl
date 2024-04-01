@@ -10,7 +10,6 @@ abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 
 # ! required !
 (::Type{<:AbstractScalarField})(g::AbstractGrid) = throw(NotImplementedError(g))
-(::Type{<:AbstractScalarField})(g::AbstractGrid, modes) = throw(NotImplementedError(g, modes))
 
 # ! required !
 # (::Type{<:AbstractScalarField})(g::AbstractGrid, func) = throw(NotImplementedError(g, func))
