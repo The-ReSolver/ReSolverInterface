@@ -7,48 +7,34 @@
 # be kept generic as they rely on the vector calculus operations. To help with
 # this a set of methods to extract the cache variables can be created.
 
-abstract type AbstractOptCache end
-
-# NOTE: placeholder so I remember what to do here
-dudt(cache::AbstractOptCache) = cache.cache[1]
-
-struct OptCache{S<:AbstractScalarField, A<:AbstractArray, B<:AbstractArray} <:AbstractOptCache
+struct Objective{T, S<:AbstractScalarField, SP<:AbstractScalarField, B<:AbstractArray, M<:AbstractArray}
     grad::VectorField{3, S}
     cache::Vector{S}
-    base::A
-    modes::B
-    params::Vector{Float64}
+    projectedCache::Vector{SP}
+    base::B
+    modes::M
+    params::Vector{T}
     free_mean::Bool
 
-    # NOTE: constructor can provide default size to cache which can be specialised by the user
+    function Objective(field::S, modes::M, base::B, params::Vector{T}, free_mean::Bool) where {S<:AbstractScalarField, M, B, T}
+        # initialise residual gradient output
+        grad = similar(field)
+
+        # initialise cache
+        cache = [S(g) for _ in 1:1]
+        projectedCache = [S(g, modes) for _ in 1:1]
+
+        new{T, S, typeof(projectedCache), B, M}(grad, cache, projectedCache, base, modes, params, free_mean)
+    end
 end
 
-function (f::OptCache)(a)
-    # assign aliases
-    # expand velocity field
-    # apply base flow
-
-    # update the velocity cache
-    _update_velocity!(f)
-
-    # compute the un-projected residual
-    @. r_unproj = ns(f)
-
-    # project the residual
-
-    # update the residual cache
-    _update_residual!(f)
-
-    # compute the un-projected gradient
-    @. grad_unproj = grad(f)
-
-    # project the gradient
-    # set the mean to zero if needed
+function (f::Objective{<:Any, <:Any, SP})(a::SP) where {SP}
+    
 end
 
-function _update_velocity!(cache::AbstractOptCache) end
+function _update_velocity!(cache) end
 
-function _update_residual!(cache::AbstractOptCache) end
+function _update_residual!(cache) end
 
-ns(::OptCache) = throw(NotImplementedError())
-grad(::OptCache) = throw(NotImplementedError())
+ns(::Objective) = throw(NotImplementedError())
+grad(::Objective) = throw(NotImplementedError())

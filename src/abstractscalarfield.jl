@@ -1,8 +1,6 @@
 # This file contains the abstract type and function definitions required for a
 # scalar field.
 
-# TODO: make this code more generic by removing type information from the higher-order methods
-
 """
     AbstractScalarField
 
@@ -12,6 +10,7 @@ abstract type AbstractScalarField{N, T<:Number} <: AbstractArray{T, N} end
 
 # ! required !
 (::Type{<:AbstractScalarField})(g::AbstractGrid) = throw(NotImplementedError(g))
+(::Type{<:AbstractScalarField})(g::AbstractGrid, modes) = throw(NotImplementedError(g, modes))
 
 # ! required !
 # (::Type{<:AbstractScalarField})(g::AbstractGrid, func) = throw(NotImplementedError(g, func))
