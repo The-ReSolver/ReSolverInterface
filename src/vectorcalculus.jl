@@ -1,7 +1,7 @@
 # This file contains the definitions required to perform vector calculus
 # operatiosn of the abstract and concrete fields defined elsewhere.
 
-# * optional *
+# ! required !
 """
     grad!(
         ∇u::AbstractScalarField,
@@ -13,8 +13,16 @@ Compute the gradient of the scalar field u, overwriting ∇u with the result.
 grad!(∇u::AbstractVectorField, u::AbstractScalarField) = throw(NotImplementedError(∇u, u))
 
 
-# ! requried !
-divergence!(div_u::AbstractVectorField, u::AbstractVectorField) = throw(NotImplementedError(div_u, u))
+# ! required !
+"""
+    divergence!(
+        div_u::AbstractScalarField,
+        u::AbstractVectorField
+    ) -> AbstractScalarField
+
+Compute the divergence of a vector field, overwriting the output into div_u.
+"""
+divergence!(div_u::AbstractScalarField, u::AbstractVectorField) = throw(NotImplementedError(div_u, u))
 
 
 # ! required !
@@ -28,8 +36,35 @@ Compute the Laplacian of the scalar field u, overwriting Δu with the result.
 """
 laplacian!(Δu::AbstractScalarField, u::AbstractScalarField) = throw(NotImplementedError(Δu, u))
 
-# ! requried !
-laplacian!(Δu::AbstractVectorField, u::AbstractVectorField) = throw(NotImplementedError(Δu, u))
+# * optional *
+"""
+    laplacian!(
+        Δu::AbstractScalarField,
+        u::AbstractScalarField
+    ) -> AbstractScalarField
+
+Compute the Laplacian of the vector field u, overwriting Δu with the result.
+
+WARNING: The default implementation assumes cartesian coordinates
+"""
+function laplacian!(Δu::AbstractVectorField{N, S}, u::AbstractVectorField{N, S}) where {N, S}
+    for i in 1:N
+        laplacian!(Δu[i], u[i])
+    end
+    return Δu
+end
+
+# ! required !
+"""
+    convection!(
+        u∇u::AbstractVectorField,
+        u::AbstractVectorField
+    ) -> AbstractVectorField
+
+Compute the nonlinear convection of a vector field, overwriting the output into
+u∇u.
+"""
+convection!(u∇u::V, u::V) where {V<:AbstractVectorField} = throw(NotImplementedError(u∇u, u))
 
 
 # ! required !

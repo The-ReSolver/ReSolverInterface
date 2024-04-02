@@ -18,6 +18,7 @@ struct Objective{S, T, N, B<:AbstractArray, M<:AbstractArray, NSE, VDE}
     navierStokesOperator!::NSE
     gradientOperator!::VDE
 
+    # TODO: if nothing is provided for operators then provide default
     function Objective(::Type{S}, grid::AbstractGrid, modes::M, base::B, navierStokesOperator!, gradientOperator!, free_mean::Bool) where {S<:AbstractScalarField, M, B, T}
         # initialise residual gradient output
         grad = S(g)
