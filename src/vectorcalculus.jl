@@ -10,7 +10,7 @@
 
 Compute the gradient of the scalar field u, overwriting ∇u with the result.
 """
-grad!(∇u::AbstractVectorField, u::AbstractScalarField) = throw(NotImplementedError(∇u, u))
+grad!(∇u::V, u::S) where {N, S<:AbstractScalarField, V<:AbstractVectorField{N, S}} = throw(NotImplementedError(∇u, u))
 
 
 # ! required !
@@ -22,7 +22,7 @@ grad!(∇u::AbstractVectorField, u::AbstractScalarField) = throw(NotImplementedE
 
 Compute the divergence of a vector field, overwriting the output into div_u.
 """
-divergence!(div_u::AbstractScalarField, u::AbstractVectorField) = throw(NotImplementedError(div_u, u))
+divergence!(div_u::S, u::V) where {N, S<:AbstractScalarField, V<:AbstractVectorField{N, S}} = throw(NotImplementedError(div_u, u))
 
 
 # ! required !
@@ -34,7 +34,7 @@ divergence!(div_u::AbstractScalarField, u::AbstractVectorField) = throw(NotImple
 
 Compute the Laplacian of the scalar field u, overwriting Δu with the result.
 """
-laplacian!(Δu::AbstractScalarField, u::AbstractScalarField) = throw(NotImplementedError(Δu, u))
+laplacian!(Δu::S, u::S) where {S<:AbstractScalarField} = throw(NotImplementedError(Δu, u))
 
 # * optional *
 """
@@ -77,5 +77,5 @@ convection!(u∇u::V, u::V) where {V<:AbstractVectorField} = throw(NotImplemente
 Compute the time derivative of the scalar field u, overwriting dudt with the
 result
 """
-ddt!(dudt::AbstractScalarField, u::AbstractScalarField) = throw(NotImplementedError(dudt, u))
-ddt!(dudt::VectorField, u::VectorField) = ddt!.(dudt, u)
+ddt!(dudt::S, u::S) where {S<:AbstractScalarField} = throw(NotImplementedError(dudt, u))
+ddt!(dudt::AbstractVectorField{N, S}, u::AbstractVectorField{N, S}) where {N, S} = ddt!.(dudt, u)

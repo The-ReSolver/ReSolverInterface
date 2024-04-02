@@ -8,6 +8,7 @@
 # To help with this a set of methods to extract the cache variables can be
 # created.
 
+# FIXME: type parameter doesn't allow for abstract vector field, only my concrete implementation
 struct Objective{S, T, N, B<:AbstractArray, M<:AbstractArray, NSE, VDE}
     grad::ProjectedScalarField{N, S, T, M}
     cache::Vector{VectorField{3, S}}
