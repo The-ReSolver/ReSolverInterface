@@ -8,16 +8,17 @@
 # To help with this a set of methods to extract the cache variables can be
 # created.
 
-struct Objective{S, T, N, B<:AbstractArray, M<:AbstractArray}
-    grad::VectorField{3, S}
+struct Objective{S, T, N, B<:AbstractArray, M<:AbstractArray, NSE, VDE}
+    grad::ProjectedScalarField{N, S, T, M}
     cache::Vector{VectorField{3, S}}
     projectedCache::Vector{ProjectedScalarField{N, S, T, M}}
     base::B
     modes::M
-    params::Vector{T}
     free_mean::Bool
+    navierStokesRHS!::NSE
+    gradientRHS!::VDE
 
-    function Objective(::Type{S}, grid::AbstractGrid, modes::M, base::B, params::Vector{T}, free_mean::Bool) where {S<:AbstractScalarField, M, B, T}
+    function Objective(::Type{S}, grid::AbstractGrid, modes::M, base::B, navierStokesRHS!, gradientRHS!, free_mean::Bool) where {S<:AbstractScalarField, M, B, T}
         # initialise residual gradient output
         grad = S(g)
 
@@ -27,7 +28,7 @@ struct Objective{S, T, N, B<:AbstractArray, M<:AbstractArray}
 
         params = convert.(eltype(field), params)
 
-        new{T, S, typeof(projectedCache), B, M}(grad, cache, projectedCache, base, modes, params, free_mean)
+        new{S, eltype(grad), ndims(grad), B, M, typeof(navierStokesRHS!), typeof(gradientRHS!)}(grad, cache, projectedCache, base, modes, params, free_mean, navierStokesRHS!, gradientRHS!)
     end
 end
 
