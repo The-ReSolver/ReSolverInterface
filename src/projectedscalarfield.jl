@@ -6,7 +6,7 @@
 # internal and therefore does not have expose a faulty implementation to the
 # user.
 
-struct ProjectedScalarField{N, S<:AbstractScalarField, T, M} <: AbstractScalarField{N, T}
+struct ProjectedScalarField{S<:AbstractScalarField, N, T, M} <: AbstractScalarField{N, T}
     modes::M
     field::S
 end
