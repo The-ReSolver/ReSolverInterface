@@ -68,6 +68,7 @@ u∇v.
 convection!(u∇v::V, u::V, v::V) where {V<:AbstractVectorField} = throw(NotImplementedError(u∇v, u, v))
 convection!(u∇u::V, u::V) where {V<:AbstractVectorField} = convection!(u∇u, u, u)
 
+convection2!(∇uv::V, u::V, v::V) where {V<:VectorField} = throw(NotImplementedError(∇uv, u, v))
 
 # ! required !
 """
