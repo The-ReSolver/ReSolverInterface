@@ -14,7 +14,7 @@ include("projectedscalarfield.jl")
 include("vectorfield.jl")
 include("broadcasting.jl")
 include("vectorcalculus.jl")
-include("abstractfft.jl")
+include("operators.jl")
 include("objective.jl")
 
 end
