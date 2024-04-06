@@ -1,7 +1,6 @@
 using ReSolverInterface
 using Test
 using LinearAlgebra
-using FFTW
 
 using FDGrids
 
