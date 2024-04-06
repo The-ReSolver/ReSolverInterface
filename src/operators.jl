@@ -1,8 +1,6 @@
 # Definitions for the general operators for the Navier-Stokes equations and the
 # variational dynamics.
 
-# FIXME: construct concrete vectorfield so user cannot have their own (maybe I should just remove the options?)
-# TODO: remove abstract vector field
 struct NavierStokesOperator{N, S}
     cache::Vector{VectorField{N, S}}
     Re_recip::Float64

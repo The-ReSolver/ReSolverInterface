@@ -10,19 +10,19 @@
 
 Compute the gradient of the scalar field u, overwriting ∇u with the result.
 """
-grad!(∇u::V, u::S) where {N, S<:AbstractScalarField, V<:AbstractVectorField{N, S}} = throw(NotImplementedError(∇u, u))
+grad!(∇u::V, u::S) where {N, S<:AbstractScalarField, V<:VectorField{N, S}} = throw(NotImplementedError(∇u, u))
 
 
 # ! required !
 """
     divergence!(
         div_u::AbstractScalarField,
-        u::AbstractVectorField
+        u::VectorField
     ) -> AbstractScalarField
 
 Compute the divergence of a vector field, overwriting the output into div_u.
 """
-divergence!(div_u::S, u::V) where {N, S<:AbstractScalarField, V<:AbstractVectorField{N, S}} = throw(NotImplementedError(div_u, u))
+divergence!(div_u::S, u::V) where {N, S<:AbstractScalarField, V<:VectorField{N, S}} = throw(NotImplementedError(div_u, u))
 
 
 # ! required !
@@ -47,7 +47,7 @@ Compute the Laplacian of the vector field u, overwriting Δu with the result.
 
 WARNING: The default implementation assumes cartesian coordinates
 """
-function laplacian!(Δu::AbstractVectorField{N, S}, u::AbstractVectorField{N, S}) where {N, S}
+function laplacian!(Δu::VectorField{N, S}, u::VectorField{N, S}) where {N, S}
     for i in 1:N
         laplacian!(Δu[i], u[i])
     end
@@ -57,16 +57,16 @@ end
 # ! required !
 """
     convection!(
-        u∇v::AbstractVectorField,
-        u::AbstractVectorField,
-        v::AbstractVectorField
-    ) -> AbstractVectorField
+        u∇v::VectorField,
+        u::VectorField,
+        v::VectorField
+    ) -> VectorField
 
 Compute the nonlinear convection of a vector field, overwriting the output into
 u∇v.
 """
-convection!(u∇v::V, u::V, v::V) where {V<:AbstractVectorField} = throw(NotImplementedError(u∇v, u, v))
-convection!(u∇u::V, u::V) where {V<:AbstractVectorField} = convection!(u∇u, u, u)
+convection!(u∇v::V, u::V, v::V) where {V<:VectorField} = throw(NotImplementedError(u∇v, u, v))
+convection!(u∇u::V, u::V) where {V<:VectorField} = convection!(u∇u, u, u)
 
 convection2!(∇uv::V, u::V, v::V) where {V<:VectorField} = throw(NotImplementedError(∇uv, u, v))
 
@@ -81,4 +81,4 @@ Compute the time derivative of the scalar field u, overwriting dudt with the
 result
 """
 ddt!(dudt::S, u::S) where {S<:AbstractScalarField} = throw(NotImplementedError(dudt, u))
-ddt!(dudt::AbstractVectorField{N, S}, u::AbstractVectorField{N, S}) where {N, S} = ddt!.(dudt, u)
+ddt!(dudt::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = ddt!.(dudt, u)
