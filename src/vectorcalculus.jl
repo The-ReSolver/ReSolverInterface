@@ -57,14 +57,16 @@ end
 # ! required !
 """
     convection!(
-        u∇u::AbstractVectorField,
-        u::AbstractVectorField
+        u∇v::AbstractVectorField,
+        u::AbstractVectorField,
+        v::AbstractVectorField
     ) -> AbstractVectorField
 
 Compute the nonlinear convection of a vector field, overwriting the output into
-u∇u.
+u∇v.
 """
-convection!(u∇u::V, u::V) where {V<:AbstractVectorField} = throw(NotImplementedError(u∇u, u))
+convection!(u∇v::V, u::V, v::V) where {V<:AbstractVectorField} = throw(NotImplementedError(u∇v, u, v))
+convection!(u∇u::V, u::V) where {V<:AbstractVectorField} = convection!(u∇u, u, u)
 
 
 # ! required !
