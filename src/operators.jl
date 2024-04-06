@@ -7,7 +7,7 @@ struct NavierStokesOperator{N, S}
     cache::Vector{VectorField{N, S}}
     Re_recip::Float64
 
-    NavierStokesOperator(::Type{S}, g::AbstractGrid, Re::Float64) where {S<:AbstractScalarField} = new{length(cache[1]), S}([VectorField(S, g) for _ in 1:2], 1/Re)
+    NavierStokesOperator(::Type{S}, g::AbstractGrid, N::Int, Re::Float64) where {S<:AbstractScalarField} = new{N, S}([VectorField(S, g, N) for _ in 1:2], 1/Re)
 end
 
 function (f::NavierStokesOperator{N, S})(N_u::VectorField{N, S}, u::VectorField{N, S}) where {N, S<:AbstractScalarField}
