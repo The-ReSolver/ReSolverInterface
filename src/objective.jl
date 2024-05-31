@@ -3,9 +3,9 @@
 # used to compute the residuals.
 
 struct Objective{S, T, D, N, B<:AbstractArray, M<:AbstractArray, NSE, VDE}
-    grad::ProjectedScalarField{D, S, T, M}
+    grad::ProjectedField{D, S, T, M}
     cache::Vector{VectorField{N, S}}
-    projectedCache::ProjectedScalarField{S, D, T, M}
+    projectedCache::ProjectedField{S, D, T, M}
     base::B
     modes::M
     free_mean::Bool
@@ -14,11 +14,11 @@ struct Objective{S, T, D, N, B<:AbstractArray, M<:AbstractArray, NSE, VDE}
 
     function Objective(::Type{S}, grid::AbstractGrid, N::Int, Re::Float64, modes::M, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {S<:AbstractScalarField, M, B, T}
         # initialise residual gradient output
-        grad = ProjectedScalarField(modes, S(g))
+        grad = ProjectedField(modes, S(g))
 
         # initialise cache
         cache = [VectorField(S, g, N) for _ in 1:6]
-        projectedCache = ProjectedScalarField(modes, S(g))
+        projectedCache = ProjectedField(modes, S(g))
 
         params = convert.(eltype(field), params)
 
@@ -26,7 +26,7 @@ struct Objective{S, T, D, N, B<:AbstractArray, M<:AbstractArray, NSE, VDE}
     end
 end
 
-function (f::Objective{S})(a::ProjectedScalarField{S}, compute_grad::Bool=true) where {S}
+function (f::Objective{S})(a::ProjectedField{S}, compute_grad::Bool=true) where {S}
     # assign aliases
     u    = f.cache[1]
     dudt = f.cache[2]
@@ -55,9 +55,7 @@ function (f::Objective{S})(a::ProjectedScalarField{S}, compute_grad::Bool=true) 
     return f.grad, norm(s)^2/volume(grid(u))
 end
 
-function (f::Objective{S})(F, G, a::ProjectedScalarField{S}) where {S}
+function (f::Objective{S})(F, G, a::ProjectedField{S}) where {S}
     G === nothing ? F = f(a, false)[2] : (F = f(a, true)[2]; G .= f.grad)
     return F
 end
-# TODO: conversion of field to real vector
-(f::Objective)(x::Vector) = f(vectorToVelocityCoefficients!(f.proj_cache[2], x), false)[2]
