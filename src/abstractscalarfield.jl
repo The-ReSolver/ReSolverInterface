@@ -88,3 +88,18 @@ LinearAlgebra.dot(u::AbstractScalarField, v::AbstractScalarField) = throw(NotImp
 Compute the norm of a scalar field and return the result.
 """
 LinearAlgebra.norm(p::AbstractScalarField) = sqrt(LinearAlgebra.dot(p, p))
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# derivative methods
+# ! required !
+"""
+    ddt!(
+        dudt::AbstractScalarField,
+        u::AbstractScalarField
+    ) -> AbstractScalarField
+
+Compute the time derivative of the scalar field u, overwriting dudt with the
+result
+"""
+ddt!(dudt::S, u::S) where {S<:AbstractScalarField} = throw(NotImplementedError(dudt, u))

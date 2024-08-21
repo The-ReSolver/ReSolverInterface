@@ -1,7 +1,10 @@
 # This file contains the definitions required to perform vector calculus
-# operatiosn of the abstract and concrete fields defined elsewhere.
+# operatiosn of the abstract and concrete fields defined elsewhere. These
+# operations are optional, as it is possible to pass your own methods to the
+# main operators for more flexible operations. If however, these methods are
+# directly extended then no extra input is required.
 
-# ! required !
+# * optional *
 """
     grad!(
         ∇u::AbstractScalarField,
@@ -13,7 +16,7 @@ Compute the gradient of the scalar field u, overwriting ∇u with the result.
 grad!(∇u::V, u::S) where {N, S<:AbstractScalarField, V<:VectorField{N, S}} = throw(NotImplementedError(∇u, u))
 
 
-# ! required !
+# * optional *
 """
     divergence!(
         div_u::AbstractScalarField,
@@ -25,7 +28,7 @@ Compute the divergence of a vector field, overwriting the output into div_u.
 divergence!(div_u::S, u::V) where {N, S<:AbstractScalarField, V<:VectorField{N, S}} = throw(NotImplementedError(div_u, u))
 
 
-# ! required !
+# * optional *
 """
     laplacian!(
         Δu::AbstractScalarField,
@@ -54,7 +57,7 @@ function laplacian!(Δu::VectorField{N, S}, u::VectorField{N, S}) where {N, S}
     return Δu
 end
 
-# ! required !
+# * optional *
 """
     convection!(
         u∇v::VectorField,
@@ -69,16 +72,3 @@ convection!(u∇v::V, u::V, v::V) where {V<:VectorField} = throw(NotImplementedE
 convection!(u∇u::V, u::V) where {V<:VectorField} = convection!(u∇u, u, u)
 
 convection2!(∇uv::V, u::V, v::V) where {V<:VectorField} = throw(NotImplementedError(∇uv, u, v))
-
-# ! required !
-"""
-    ddt!(
-        dudt::AbstractScalarField,
-        u::AbstractScalarField
-    ) -> AbstractScalarField
-
-Compute the time derivative of the scalar field u, overwriting dudt with the
-result
-"""
-ddt!(dudt::S, u::S) where {S<:AbstractScalarField} = throw(NotImplementedError(dudt, u))
-ddt!(dudt::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = ddt!.(dudt, u)
