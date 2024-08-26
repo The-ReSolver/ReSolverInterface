@@ -12,7 +12,7 @@ struct Objective{S, T, D, N, B<:AbstractArray, M<:AbstractArray, NSE, VDE}
     navierStokesOperator::NSE
     gradientOperator::VDE
 
-    function Objective(::Type{S}, grid::AbstractGrid, N::Int, Re::Float64, modes::M, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {S<:AbstractScalarField, M, B, T}
+    function Objective(::Type{S}, grid::AbstractGrid, N::Int, Re::Float64, modes::M, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {S<:AbstractScalarField, M, B}
         # initialise residual gradient output
         grad = ProjectedField(modes, S(g))
 
@@ -52,7 +52,7 @@ function (f::Objective{S})(a::ProjectedField{S}, compute_grad::Bool=true) where 
         project!(f.grad, dRdu)
     end
 
-    return f.grad, norm(s)^2/volume(grid(u))
+    return f.grad, norm(r)^2/volume(grid(u))
 end
 
 function (f::Objective{S})(F, G, a::ProjectedField{S}) where {S}
