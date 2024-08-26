@@ -3,7 +3,7 @@ module ReSolverInterface
 using LinearAlgebra
 
 export AbstractGrid, points, volume
-export AbstractScalarField, grid, mult!, grad!, laplacian!, ddt!, dot, norm
+export AbstractScalarField, grid, mult!, grad!, laplacian!, convection!, convection2!, ddt!, dot, norm
 export VectorField, divergence!, cross!
 export ProjectedField, expand!, project!
 export NavierStokesOperator, GradientOperator

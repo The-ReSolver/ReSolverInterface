@@ -13,7 +13,7 @@
 
 Compute the gradient of the scalar field u, overwriting ∇u with the result.
 """
-grad!(∇u::V, u::S) where {N, S<:AbstractScalarField, V<:VectorField{N, S}} = throw(NotImplementedError(∇u, u))
+grad!(∇u::VectorField{N, S}, u::S) where {N, S<:AbstractScalarField} = throw(NotImplementedError(∇u, u))
 
 
 # * optional *
@@ -25,7 +25,7 @@ grad!(∇u::V, u::S) where {N, S<:AbstractScalarField, V<:VectorField{N, S}} = t
 
 Compute the divergence of a vector field, overwriting the output into div_u.
 """
-divergence!(div_u::S, u::V) where {N, S<:AbstractScalarField, V<:VectorField{N, S}} = throw(NotImplementedError(div_u, u))
+divergence!(div_u::S, u::VectorField{N, S}) where {N, S<:AbstractScalarField} = throw(NotImplementedError(div_u, u))
 
 
 # * optional *
