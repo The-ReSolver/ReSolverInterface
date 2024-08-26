@@ -6,19 +6,19 @@
 # internal and therefore does not have expose a faulty implementation to the
 # user.
 
-struct ProjectedField{S<:AbstractScalarField, N, T, M} <: AbstractScalarField{N, T}
+struct ProjectedField{S<:AbstractScalarField, N, M, T} <: AbstractScalarField{N, T}
     modes::M
     field::S
 
-    ProjectedField(field::S, modes) where {N, T, S<:AbstractScalarField{N, T}} = new{S, N, T, typeof(modes)}(modes, field)
+    ProjectedField(field::S, modes) where {N, T, S<:AbstractScalarField{N, T}} = new{S, N, typeof(modes), T}(modes, field)
 end
-
-# ! required !
-expand!(u::VectorField{M, S}, a::ProjectedField{S, N}) where {N, M, S<:AbstractScalarField{N}} = throw(NotImplementedError(u, a))
-project!(a::ProjectedField{S, N}, u::VectorField{M, S}) where {N, M, S<:AbstractScalarField{N}} = throw(NotImplementedError(a, u))
 
 Base.parent(a::ProjectedField) = parent(a.field)
 Base.similar(a::ProjectedField, ::Type{T}) where {T} = ProjectedField(similar(a.field, T), a.modes)
+modes(a::ProjectedField) = a.modes
 
 # ! required !
-LinearAlgebra.dot(u::P, v::P) where {P<:ProjectedField} = throw(NotImplementedError(u, v))
+expand!(u::VectorField{M, S}, a::ProjectedField{S, N}) where {M, N, S<:AbstractScalarField{N}} = throw(NotImplementedError(u, a))
+
+# ! required !
+project!(a::ProjectedField{S, N}, u::VectorField{M, S}) where {N, M, S<:AbstractScalarField{N}} = throw(NotImplementedError(a, u))
