@@ -11,17 +11,15 @@ struct Objective{S, T, N, D, B, M, NSE, VDE}
     navierStokesOperator::NSE
     gradientOperator::VDE
 
-    function Objective(::Type{S}, grid::AbstractGrid, D::Int, Re::Float64, modes::M, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {S<:AbstractScalarField, M, B}
+    function Objective(::Type{S}, grid::AbstractGrid, D::Int, Re::Real, modes::M, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {S<:AbstractScalarField, M, B}
         # initialise residual gradient output
-        grad = ProjectedField(g, modes)
+        grad = ProjectedField(grid, modes)
 
         # initialise cache
-        cache = [VectorField(S, g, D) for _ in 1:6]
-        projectedCache = ProjectedField(g, modes)
+        cache = [VectorField(S, grid, D) for _ in 1:6]
+        projectedCache = ProjectedField(grid, modes)
 
-        params = convert.(eltype(field), params)
-
-        new{S, eltype(grad), ndims(grad), D, B, M, typeof(navierStokesOperator!), typeof(gradientOperator!)}(grad, cache, projectedCache, base, modes, params, free_mean, navierStokesOperator, gradientOperator)
+        new{typeof(cache[1][1]), eltype(grad), ndims(grad), D, B, M, typeof(navierStokesOperator), typeof(gradientOperator)}(grad, cache, projectedCache, base, free_mean, navierStokesOperator, gradientOperator)
     end
 end
 
