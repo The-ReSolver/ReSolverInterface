@@ -29,5 +29,5 @@ end
 
     @test nalloc(a1, a2, a3) == 0
 
-    @test a1 .+ a2 == ProjectedField(MyField(g, a1.field + a2.field), modes)
+    @test a1 .+ a2 == ProjectedField(modes, a1.field + a2.field)
 end

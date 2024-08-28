@@ -6,6 +6,9 @@
 Base.BroadcastStyle(u::Type{<:AbstractScalarField}) = Base.Broadcast.ArrayStyle{u}()
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{S}}, ::Type{T}) where {T, S<:AbstractScalarField} = similar(find_field(bc), T)
 
+Base.BroadcastStyle(::Type{<:ProjectedField}) = Base.Broadcast.ArrayStyle{ProjectedField}()
+Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{P}}, ::Type{T}) where {P<:ProjectedField, T} = similar(find_field(bc), T)
+
 Base.BroadcastStyle(q::Type{<:VectorField{N}}) where {N} = Base.Broadcast.ArrayStyle{q}()
 Base.similar(bc::Base.Broadcast.Broadcasted{Base.Broadcast.ArrayStyle{V}}, ::Type{T}) where {T, N, V<:VectorField{N}} = similar(find_field(bc), T)
 
@@ -15,6 +18,7 @@ find_field(bc::Base.Broadcast.Broadcasted) = find_field(bc.args)
 find_field(args::Tuple) = find_field(find_field(args[1]), Base.tail(args))
 find_field(a::VectorField, rest) = a
 # find_field(a::Base.Broadcast.Extruded{<:VectorField}, rest) = a.x
+find_field(a::ProjectedField, rest) = a
 find_field(a::AbstractScalarField, rest) = a
 find_field(::Any, rest) = find_field(rest)
 find_field(x) = x

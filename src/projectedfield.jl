@@ -1,24 +1,27 @@
 # Definitions for a concrete implementation of a projected scalar field built
 # upon the abstract interface defined for the generic scalar field.
 
-# This type technically breaks what is expected from the abstractscalarfield
-# interface. This is not a massive problem since its workings should remain
-# internal and therefore does not have expose a faulty implementation to the
-# user.
-
-struct ProjectedField{S<:AbstractScalarField, N, M, T} <: AbstractScalarField{N, T}
+struct ProjectedField{N, T, M} <: AbstractArray{T, N}
     modes::M
-    field::S
-
-    ProjectedField(field::S, modes) where {N, T, S<:AbstractScalarField{N, T}} = new{S, N, typeof(modes), T}(modes, field)
+    field::Array{T, N}
 end
 
-Base.parent(a::ProjectedField) = parent(a.field)
-Base.similar(a::ProjectedField, ::Type{T}) where {T} = ProjectedField(similar(a.field, T), a.modes)
+# ! required !
+ProjectedField(grid::AbstractGrid, modes) = throw(NotImplementedError(grid, modes))
+
+Base.parent(a::ProjectedField) = a.field
+Base.size(a::ProjectedField) = size(parent(a))
+Base.similar(a::ProjectedField, ::Type{T}) where {T} = ProjectedField(a.modes, similar(a.field, T))
+Base.ndims(::ProjectedField{N}) where {N} = N
+Base.eltype(::ProjectedField{N, T}) where {N, T} = T
+Base.IndexStyle(::Type{<:ProjectedField}) = IndexLinear()
+Base.getindex(a::ProjectedField, i::Int) = parent(a)[i]
+Base.setindex!(a::ProjectedField, v, i::Int) = (parent(a)[i] = v; return v)
+
 modes(a::ProjectedField) = a.modes
 
 # ! required !
-expand!(u::VectorField{M, S}, a::ProjectedField{S, N}) where {M, N, S<:AbstractScalarField{N}} = throw(NotImplementedError(u, a))
+expand!(u::VectorField{M, S}, a::ProjectedField{N}) where {M, N, S<:AbstractScalarField{N}} = throw(NotImplementedError(u, a))
 
 # ! required !
-project!(a::ProjectedField{S, N}, u::VectorField{M, S}) where {N, M, S<:AbstractScalarField{N}} = throw(NotImplementedError(a, u))
+project!(a::ProjectedField{N}, u::VectorField{M, S}) where {N, M, S<:AbstractScalarField{N}} = throw(NotImplementedError(a, u))

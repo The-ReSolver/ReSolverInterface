@@ -2,27 +2,26 @@
 # variables. In addition it will work as a functor to allow it to directly be
 # used to compute the residuals.
 
-struct Objective{S, T, D, N, B<:AbstractArray, M<:AbstractArray, NSE, VDE}
-    grad::ProjectedField{D, S, T, M}
-    cache::Vector{VectorField{N, S}}
-    projectedCache::ProjectedField{S, D, T, M}
+struct Objective{S, T, N, D, B, M, NSE, VDE}
+    grad::ProjectedField{N, T, M}
+    cache::Vector{VectorField{D, S}}
+    projectedCache::ProjectedField{N, T, M}
     base::B
-    modes::M
     free_mean::Bool
     navierStokesOperator::NSE
     gradientOperator::VDE
 
-    function Objective(::Type{S}, grid::AbstractGrid, N::Int, Re::Float64, modes::M, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {S<:AbstractScalarField, M, B}
+    function Objective(::Type{S}, grid::AbstractGrid, D::Int, Re::Float64, modes::M, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {S<:AbstractScalarField, M, B}
         # initialise residual gradient output
-        grad = ProjectedField(modes, S(g))
+        grad = ProjectedField(g, modes)
 
         # initialise cache
-        cache = [VectorField(S, g, N) for _ in 1:6]
-        projectedCache = ProjectedField(modes, S(g))
+        cache = [VectorField(S, g, D) for _ in 1:6]
+        projectedCache = ProjectedField(g, modes)
 
         params = convert.(eltype(field), params)
 
-        new{S, eltype(grad), ndims(grad), N, B, M, typeof(navierStokesOperator!), typeof(gradientOperator!)}(grad, cache, projectedCache, base, modes, params, free_mean, navierStokesOperator, gradientOperator)
+        new{S, eltype(grad), ndims(grad), D, B, M, typeof(navierStokesOperator!), typeof(gradientOperator!)}(grad, cache, projectedCache, base, modes, params, free_mean, navierStokesOperator, gradientOperator)
     end
 end
 
