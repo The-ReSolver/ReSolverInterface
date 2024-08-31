@@ -12,6 +12,8 @@ end
     u1 = VectorField(MyField(g, ones(2, 2)), MyField(g, ones(2, 2)))
     u2 = VectorField(MyField(g, rand(ComplexF64, 2, 2)), MyField(g, rand(ComplexF64, 2, 2)), MyField(g, rand(ComplexF64, 2, 2)))
 
+    @test_nowarn u2 .= 0.0
+
     @test nalloc(u2, similar(u2), similar(u2)) == 0
 
     @test u1 .+ (1.0+2.0im) == VectorField(MyField(g, [2+2im 2+2im; 2+2im 2+2im]), MyField(g, [2+2im 2+2im; 2+2im 2+2im]))

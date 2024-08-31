@@ -39,6 +39,13 @@ function Base.copyto!(dest::VectorField{N}, bc::Base.Broadcast.Broadcasted{Base.
     return dest
 end
 
+function Base.copyto!(dest::VectorField{N}, bc::Base.Broadcast.Broadcasted{<:Base.Broadcast.AbstractArrayStyle{0}}) where {N}
+    for i in 1:N
+        copyto!(dest[i], unpack(bc, i))
+    end
+    return dest
+end
+
 @inline unpack(bc::Broadcast.Broadcasted, i) = Broadcast.Broadcasted(bc.f, _unpack(i, bc.args))
 @inline unpack(x::Any,                    i) = x
 @inline unpack(x::VectorField,    i) = x.elements[i]
