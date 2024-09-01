@@ -77,4 +77,9 @@ LinearAlgebra.norm(q::VectorField) = sqrt(LinearAlgebra.dot(q, q))
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # derivative methods
 # * optional *
-ddt!(dudt::VectorField{N, S}, u::VectorField{N, S}) where {N, S} = ddt!.(dudt, u)
+function ddt!(dudt::VectorField{N, S}, u::VectorField{N, S}) where {N, S}
+    for i in 1:N
+        ddt!(dudt[i], u[i])
+    end
+    return dudt
+end

@@ -19,7 +19,7 @@ function (f::NavierStokesOperator{N, S})(N_u::VectorField{N, S}, u::VectorField{
     Δu  = f.cache[2]
 
     # compute operator
-    @. N_u = -f.conv!(u∇u, u) + f.Re_recip*f.lapl!(Δu, u)
+    N_u .= .-f.conv!(u∇u, u, u) .+ f.Re_recip.*f.lapl!(Δu, u)
 
     return N_u
 end
@@ -45,7 +45,7 @@ function (f::GradientOperator{N, S})(M_ur::VectorField{N, S}, u::VectorField{N, 
     Δr  = f.cache[3]
 
     # compute operator
-    @. M_ur = f.conv1!(u∇r) + f.conv2!(∇ur, u, r) - f.Re_recip*f.lapl!(Δr, r)
+    M_ur .= f.conv1!(u∇r, u, r) .+ f.conv2!(∇ur, u, r) .- f.Re_recip.*f.lapl!(Δr, r)
 
     return M_ur
 end

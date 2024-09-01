@@ -16,14 +16,14 @@ struct Objective{S, T, N, D, B, M, NSE, VDE}
         grad = ProjectedField(grid, modes)
 
         # initialise cache
-        cache = [VectorField(S, grid, D) for _ in 1:6]
+        cache = [VectorField(S, grid, D) for _ in 1:7]
         projectedCache = ProjectedField(grid, modes)
 
         new{typeof(cache[1][1]), eltype(grad), ndims(grad), D, B, M, typeof(navierStokesOperator), typeof(gradientOperator)}(grad, cache, projectedCache, base, free_mean, navierStokesOperator, gradientOperator)
     end
 end
 
-function (f::Objective{S})(a::ProjectedField{S}, compute_grad::Bool=true) where {S}
+function (f::Objective{S})(a::ProjectedField{N}, compute_grad::Bool=true) where {N, S<:AbstractScalarField{N}}
     # assign aliases
     u    = f.cache[1]
     dudt = f.cache[2]
@@ -31,7 +31,8 @@ function (f::Objective{S})(a::ProjectedField{S}, compute_grad::Bool=true) where 
     r    = f.cache[4]
     drdt = f.cache[5]
     M_ur = f.cache[6]
-    s    = f.projectedCache[1]
+    dRdu = f.cache[7]
+    s    = f.projectedCache
 
     # expand velocity coefficients into velocity field
     expand!(u, a)
@@ -40,19 +41,19 @@ function (f::Objective{S})(a::ProjectedField{S}, compute_grad::Bool=true) where 
     include_base!(u, f.base)
 
     # compute local residual
-    @. r = ddt!(dudt, u) - f.navierStokesOperator(N_u, u)
+    r .= ddt!(dudt, u) .- f.navierStokesOperator(N_u, u)
     expand!(r, project!(s, r))
 
     # compute gradient
     if compute_grad
-        @. dRdu = ddt!(drdt, r) + f.gradientOperator(M_ur, u, r)
+        dRdu .= ddt!(drdt, r) .+ f.gradientOperator(M_ur, u, r)
         project!(f.grad, dRdu)
     end
 
     return f.grad, norm(r)^2/volume(grid(u))
 end
 
-function (f::Objective{S})(F, G, a::ProjectedField{S}) where {S}
+function (f::Objective{S})(F, G, a::ProjectedField{N}) where {N, S<:AbstractScalarField{N}}
     G === nothing ? F = f(a, false)[2] : (F = f(a, true)[2]; G .= f.grad)
     return F
 end
