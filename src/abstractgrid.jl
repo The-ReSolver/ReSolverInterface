@@ -29,7 +29,14 @@ fieldType(::Type{G}) where {G<:AbstractGrid} = throw(NotImplementedError(G))
 Return the number of velocity components associated with a complete velocity
 field for a given grid.
 """
-numVelComps(::Type{G}) where {G<:AbstractGrid} = throw(NotImplementedError())
+numVelComps(::Type{G}) where {G<:AbstractGrid} = throw(NotImplementedError(G))
+
+"""
+    period(g::AbstractGrid) -> Float64
+
+Return the period of a given temporal grid.
+"""
+period(g::AbstractGrid) = throw(NotImplementedError(g))
 
 """
     ==(g1::AbstractGrid, g2::AbstractGrid) -> Bool
