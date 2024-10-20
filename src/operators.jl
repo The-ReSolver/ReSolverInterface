@@ -7,9 +7,9 @@ struct NavierStokesOperator{N, S, C, L}
     conv!::C
     lapl!::L
 
-    function NavierStokesOperator(::Type{S}, g::AbstractGrid, N::Int, Re::Real; conv::C=convection!, lapl::L=laplacian!) where {S<:AbstractScalarField, C, L}
-        cache = [VectorField(S, g, N) for _ in 1:2]
-        new{N, typeof(cache[1][1]), C, L}(cache, 1/Re, conv, lapl)
+    function NavierStokesOperator(g::G, Re::Real; conv::C=convection!, lapl::L=laplacian!) where {G<:AbstractGrid, C, L}
+        cache = [VectorField(g, numVelComps(G)) for _ in 1:2]
+        new{numVelComps(G), eltype(cache[1]), C, L}(cache, 1/Re, conv, lapl)
     end
 end
 
@@ -32,9 +32,9 @@ struct GradientOperator{N, S, C1, C2, L}
     conv2!::C2
     lapl!::L
 
-    function GradientOperator(::Type{S}, g::AbstractGrid, N::Int, Re::Real; conv1::C1=convection!, conv2::C2=convection2!, lapl::L=laplacian!) where {S<:AbstractScalarField, C1, C2, L}
-        cache = [VectorField(S, g, N) for _ in 1:3]
-        new{N, typeof(cache[1][1]), C1, C2, L}(cache, 1/Re, conv1, conv2, lapl)
+    function GradientOperator(g::G, Re::Real; conv1::C1=convection!, conv2::C2=convection2!, lapl::L=laplacian!) where {G<:AbstractGrid, C1, C2, L}
+        cache = [VectorField(g, numVelComps(G)) for _ in 1:3]
+        new{numVelComps(G), eltype(cache[1]), C1, C2, L}(cache, 1/Re, conv1, conv2, lapl)
     end
 end
 
