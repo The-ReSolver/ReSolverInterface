@@ -46,11 +46,11 @@ function (f::Objective{S})(a::ProjectedField{N}, compute_grad::Bool=true) where 
 
     # compute gradient
     if compute_grad
-        dRdu .= ddt!(drdt, r) .+ f.gradientOperator(M_ur, u, r)
+        dRdu .= .-ddt!(drdt, r) .+ f.gradientOperator(M_ur, u, r)
         project!(f.grad, dRdu)
     end
 
-    return f.grad, norm(r)^2/volume(grid(u))
+    return f.grad, norm(r)^2/(2*volume(grid(u)))
 end
 
 function (f::Objective{S})(F, G, a::ProjectedField{N}) where {N, S<:AbstractScalarField{N}}

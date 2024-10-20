@@ -45,7 +45,7 @@ function (f::GradientOperator{N, S})(M_ur::VectorField{N, S}, u::VectorField{N, 
     Δr  = f.cache[3]
 
     # compute operator
-    M_ur .= f.conv1!(u∇r, u, r) .+ f.conv2!(∇ur, u, r) .- f.Re_recip.*f.lapl!(Δr, r)
+    M_ur .= .-f.conv1!(u∇r, u, r) .+ f.conv2!(∇ur, u, r) .- f.Re_recip.*f.lapl!(Δr, r)
 
     return M_ur
 end

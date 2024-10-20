@@ -1,6 +1,7 @@
 # Definitions for a concrete implementation of a projected scalar field built
 # upon the abstract interface defined for the generic scalar field.
 
+# TODO: somehow get a norm method working for this
 struct ProjectedField{N, T, M} <: AbstractArray{T, N}
     modes::M
     field::Array{T, N}

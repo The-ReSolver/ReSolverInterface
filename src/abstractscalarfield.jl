@@ -54,7 +54,7 @@ end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # pointwise multiplication over the domain
-# ! required !
+# * optional *
 """
     mult!(
         uv::AbstractScalarField,
