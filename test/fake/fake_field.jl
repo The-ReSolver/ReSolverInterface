@@ -11,3 +11,6 @@ ReSolverInterface.grad!(∇u::MyField, u::MyField) = (∇u .= 2 .* u; return ∇
 ReSolverInterface.laplacian!(Δu::MyField, u::MyField) = (Δu .= u.^2; return Δu)
 ReSolverInterface.ddt!(dudt::MyField, u::MyField) = (dudt .= sqrt.(u); return dudt)
 LinearAlgebra.dot(u::MyField, v::MyField) = dot(parent(u), parent(v))
+ReSolverInterface.projectedField(::Type{<:MyGrid}, modes::Array{ComplexF64, 3}) = zeros(ComplexF64, size(modes, 2), 2)
+ReSolverInterface.expand!(u::VectorField{N, MyField}, ::ProjectedField) where {N} = u
+ReSolverInterface.project!(a::ProjectedField, ::VectorField{N, MyField}) where {N} = a

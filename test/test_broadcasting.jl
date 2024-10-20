@@ -25,11 +25,12 @@ end
 @testset "Projected field broadcasting  " begin
     g = MyGrid()
     modes = rand(ComplexF64, 5, 5, 5)
-    a1 = ProjectedField(MyField(g), modes)
-    a2 = ProjectedField(MyField(g, rand(ComplexF64, 2, 2)), modes)
-    a3 = ProjectedField(MyField(g, rand(ComplexF64, 2, 2)), modes)
+    a1 = ProjectedField(g, modes)
+    a1 .= rand(ComplexF64, 5, 2)
+    a2 = ProjectedField(MyField(g), modes)
+    a3 = ProjectedField(VectorField(g), modes)
 
     @test nalloc(a1, a2, a3) == 0
 
-    @test a1 .+ a2 == ProjectedField(modes, a1.field + a2.field)
+    @test a1 .+ a2 == ProjectedField(modes, MyGrid(), a1.field + a2.field)
 end

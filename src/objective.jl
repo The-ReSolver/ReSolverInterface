@@ -2,6 +2,7 @@
 # variables. In addition it will work as a functor to allow it to directly be
 # used to compute the residuals.
 
+# TODO: remove D argument as it is handled by numVelComps method for grid
 struct Objective{S, T, N, D, B, M, NSE, VDE}
     grad::ProjectedField{N, T, M}
     cache::Vector{VectorField{D, S}}
