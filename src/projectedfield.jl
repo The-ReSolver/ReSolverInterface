@@ -32,3 +32,6 @@ expand!(u::VectorField{M, S}, a::ProjectedField{N}) where {M, N, S<:AbstractScal
 
 # ! required !
 project!(a::ProjectedField{N}, u::VectorField{M, S}) where {N, M, S<:AbstractScalarField{N}} = throw(NotImplementedError(a, u))
+
+LinearAlgebra.dot(a::ProjectedField{G}, b::ProjectedField{G}) where {G} = dot(expand!(VectorField(grid(a), numVelComps(G)), a), expand!(VectorField(grid(a), numVelComps(G)), b))
+LinearAlgebra.norm(a::ProjectedField) = sqrt(LinearAlgebra.dot(a, a))

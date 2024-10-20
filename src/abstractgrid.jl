@@ -24,6 +24,14 @@ Return the type of the scalar field associated with a particular grid.
 fieldType(::Type{G}) where {G<:AbstractGrid} = throw(NotImplementedError(G))
 
 """
+    numVelComps(::Type{<:AbstractGrid}) -> Int
+
+Return the number of velocity components associated with a complete velocity
+field for a given grid.
+"""
+numVelComps(::Type{G}) where {G<:AbstractGrid} = throw(NotImplementedError())
+
+"""
     ==(g1::AbstractGrid, g2::AbstractGrid) -> Bool
 
 Compare two grids to see if they are the same discrete representation of the
