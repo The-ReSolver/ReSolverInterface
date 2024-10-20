@@ -2,29 +2,32 @@
 # variables. In addition it will work as a functor to allow it to directly be
 # used to compute the residuals.
 
-# TODO: remove D argument as it is handled by numVelComps method for grid
-struct Objective{S, T, N, D, B, M, NSE, VDE}
-    grad::ProjectedField{N, T, M}
+# TODO: add frequency gradient
+# TODO: add norm scaling
+# TODO: add interface for fourier transforms
+
+struct Objective{G, S, D, P, B, NSE, VDE}
+    grad::P
+    projectedCache::P
     cache::Vector{VectorField{D, S}}
-    projectedCache::ProjectedField{N, T, M}
     base::B
     free_mean::Bool
     navierStokesOperator::NSE
     gradientOperator::VDE
 
-    function Objective(::Type{S}, grid::AbstractGrid, D::Int, Re::Real, modes::M, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {S<:AbstractScalarField, M, B}
+    function Objective(grid::G, Re::Real, modes, base::B, free_mean::Bool, navierStokesOperator=NavierStokesOperator(S, grid, Re), gradientOperator=GradientOperator(S, grid, Re)) where {G<:AbstractGrid, B}
         # initialise residual gradient output
         grad = ProjectedField(grid, modes)
 
         # initialise cache
-        cache = [VectorField(S, grid, D) for _ in 1:7]
+        cache = [VectorField(grid, numVelComps(G)) for _ in 1:7]
         projectedCache = ProjectedField(grid, modes)
 
-        new{typeof(cache[1][1]), eltype(grad), ndims(grad), D, B, M, typeof(navierStokesOperator), typeof(gradientOperator)}(grad, cache, projectedCache, base, free_mean, navierStokesOperator, gradientOperator)
+        new{G, eltype(cache[1]), numVelComps(G), typeof(grad), B, typeof(navierStokesOperator), typeof(gradientOperator)}(grad, projectedCache, cache, base, free_mean, navierStokesOperator, gradientOperator)
     end
 end
 
-function (f::Objective{S})(a::ProjectedField{N}, compute_grad::Bool=true) where {N, S<:AbstractScalarField{N}}
+function (f::Objective{G})(a::ProjectedField{G}, compute_grad::Bool=true) where {G}
     # assign aliases
     u    = f.cache[1]
     dudt = f.cache[2]
@@ -54,7 +57,7 @@ function (f::Objective{S})(a::ProjectedField{N}, compute_grad::Bool=true) where 
     return f.grad, norm(r)^2/(2*volume(grid(u)))
 end
 
-function (f::Objective{S})(F, G, a::ProjectedField{N}) where {N, S<:AbstractScalarField{N}}
+function (f::Objective)(F, G, a::ProjectedField)
     G === nothing ? F = f(a, false)[2] : (F = f(a, true)[2]; G .= f.grad)
     return F
 end
