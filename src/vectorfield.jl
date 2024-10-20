@@ -35,6 +35,7 @@ Construct a vector field using a given type of base scalar field type and a
 grid on which it is defined.
 """
 VectorField(::Type{F}, grid::AbstractGrid, N::Int=3) where {F<:AbstractScalarField} = VectorField([F(grid) for _ in 1:N]...)
+VectorField(grid::G, N::Int=3) where {G<:AbstractGrid} = VectorField(fieldType(G), grid, N)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

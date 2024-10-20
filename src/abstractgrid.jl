@@ -1,7 +1,5 @@
 # This file contains the definitions required to define an abstract grid type.
 
-# TODO: implementation is fucked since grids are represented with tuples of numbers at each point
-
 abstract type AbstractGrid{T<:Real, N} end
 
 """
@@ -17,6 +15,13 @@ points(g::AbstractGrid) = throw(NotImplementedError(g))
 Return the volume (or generally metric size) of the domain defined by the grid.
 """
 volume(g::AbstractGrid) = throw(NotImplementedError(g))
+
+"""
+    fieldType(::AbstractGrid) -> S<:AbstractScalarField
+
+Return the type of the scalar field associated with a particular grid.
+"""
+fieldType(::Type{G}) where {G<:AbstractGrid} = throw(NotImplementedError(G))
 
 """
     ==(g1::AbstractGrid, g2::AbstractGrid) -> Bool
