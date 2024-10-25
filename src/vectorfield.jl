@@ -59,6 +59,16 @@ Base.copy(q::VectorField) = VectorField(copy.(parent(q))...)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# residual scaling methods
+function LinearAlgebra.mul!(v::VectorField{N, S}, A::NormScaling, u::VectorField{N, S}) where {N, S<:AbstractScalarField}
+    for i in 1:N
+        mul!(v[i], A, u[i])
+    end
+    return v
+end
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # vector cross-product
 function cross!(v_cross_u::VectorField{3}, v::AbstractVector, u::VectorField{3})
     @. v_cross_u[1] = v[2]*u[3] - v[3]*u[2]
@@ -71,8 +81,8 @@ end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # linear algebra methods
-LinearAlgebra.dot(q::VectorField{N}, p::VectorField{N}) where {N} = sum(LinearAlgebra.dot(q[i], p[i]) for i in 1:N)
-LinearAlgebra.norm(q::VectorField) = sqrt(LinearAlgebra.dot(q, q))
+LinearAlgebra.dot(q::VectorField{N}, p::VectorField{N}) where {N} = sum(dot(q[i], p[i]) for i in 1:N)
+LinearAlgebra.norm(q::VectorField) = sqrt(dot(q, q))
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

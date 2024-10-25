@@ -1,6 +1,8 @@
 # Definitions for a concrete implementation of a projected scalar field built
 # upon the abstract interface defined for the generic scalar field.
 
+# TODO: add number of modes to type parameters
+
 struct ProjectedField{G<:AbstractGrid, N, T, M} <: AbstractArray{T, N}
     modes::M
     grid::G

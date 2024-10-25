@@ -1,6 +1,8 @@
 # This file contains the abstract type and function definitions required for a
 # scalar field.
 
+# TODO: have a look at the signatures to make them more correct
+
 """
     AbstractScalarField
 
@@ -69,6 +71,18 @@ mult!(uv::AbstractScalarField, u::AbstractScalarField, v::AbstractScalarField) =
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# residual scaling methods
+"""
+    mul!(u::AbstractScalarField)
+
+Return the original scalar field scaled by the factor determined by the
+appropriately defined scaling operator for the residual.
+"""
+LinearAlgebra.mul!(v::S, A::NormScaling, u::S) where {S<:AbstractScalarField} = throw(NotImplementedError(v, A, u))
+LinearAlgebra.mul!(v::S, ::UniformScaling, u::S) where {S<:AbstractScalarField} = (v .= u; return v)
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # linear algebra methods
 # ! required !
 """
@@ -87,7 +101,7 @@ LinearAlgebra.dot(u::AbstractScalarField, v::AbstractScalarField) = throw(NotImp
 
 Compute the norm of a scalar field and return the result.
 """
-LinearAlgebra.norm(p::AbstractScalarField) = sqrt(LinearAlgebra.dot(p, p))
+LinearAlgebra.norm(p::AbstractScalarField) = sqrt(dot(p, p))
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
