@@ -32,11 +32,12 @@ field for a given grid.
 numVelComps(::Type{G}) where {G<:AbstractGrid} = throw(NotImplementedError(G))
 
 """
-    period(g::AbstractGrid) -> Float64
+    frequency(g::AbstractGrid) -> Float64
 
-Return the period of a given temporal grid.
+Return the fundamental frequency of a given grid.
 """
-period(g::AbstractGrid) = throw(NotImplementedError(g))
+frequency(g::AbstractGrid) = throw(NotImplementedError(g))
+setFrequency!(g::AbstractGrid, ω::Real) = throw(NotImplementedError(g, ω))
 
 """
     ==(g1::AbstractGrid, g2::AbstractGrid) -> Bool

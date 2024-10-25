@@ -7,6 +7,7 @@ export AbstractScalarField, grid, mult!, grad!, laplacian!, convection!, convect
 export NormScaling
 export VectorField, divergence!, cross!
 export ProjectedField, expand!, project!
+export vectorToField!, fieldToVector!, fieldToVector
 export NavierStokesOperator, GradientOperator
 
 include("notimplementederror.jl")
@@ -19,6 +20,7 @@ include("projectedfield.jl")
 include("broadcasting.jl")
 include("vectorcalculus.jl")
 include("operators.jl")
+include("vectortofield.jl")
 include("objective.jl")
 
 end
